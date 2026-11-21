@@ -1775,6 +1775,11 @@ function Footer() {
 }
 
 export default function App() {
+  // pretty URLs like /kevin/uses land on their section
+  useEffect(() => {
+    const m = location.pathname.match(/\/kevin\/(uses|notes|ireland|work|lab|studio|contact)\/?$/);
+    if (m) setTimeout(() => document.getElementById(m[1])?.scrollIntoView(), 400);
+  }, []);
   const [still] = useState(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
   return (
     <MotionConfig reducedMotion="user">
