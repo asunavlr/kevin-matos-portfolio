@@ -1652,7 +1652,7 @@ function Uses() {
               <div className="font-mono text-[10px] uppercase tracking-widest text-dim">/uses</div>
               <h3 className="mt-2 font-display text-3xl font-semibold tracking-tight">What I build with</h3>
             </div>
-            <a href={`${LINKS.github}/portfolio`} target="_blank" rel="noreferrer" className="rounded-full border border-line2 px-4 py-2 font-mono text-xs text-soft hover:border-white/50 hover:text-ink">
+            <a href={`${LINKS.github}/kevin-matos-portfolio`} target="_blank" rel="noreferrer" className="rounded-full border border-line2 px-4 py-2 font-mono text-xs text-soft hover:border-white/50 hover:text-ink">
               this site's source ↗
             </a>
           </div>
