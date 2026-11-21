@@ -29,13 +29,14 @@ export const CASES = [
     gallery: ["/kevin/shots/sac-painel.jpg", "/kevin/shots/sac-ia.jpg", "/kevin/shots/sac-conhecimento.jpg", "/kevin/shots/sac-filas.jpg", "/kevin/shots/sac-tickets.jpg", "/kevin/shots/avodah.jpg"],
     color: "#2dd4bf",
     metrics: [["22", "Postgres tables with pgvector"], ["24", "write actions behind role checks"], ["Daily", "backups with a tested restore"]],
-    lede: "The customer service hub of an eyewear distributor: WhatsApp inbox, tickets, knowledge base, dashboards, with an AI agent layer designed to answer before a human steps in.",
+    lede: "Built with my business partner: the customer service hub of an eyewear distributor: WhatsApp inbox, tickets, knowledge base, dashboards, with an AI agent layer designed to answer before a human steps in.",
     points: [
       ["Three audiences", "optical stores, end customers and sales reps in one queue"],
       ["Operations", "tickets, queues, people and permissions with real write paths"],
-      ["Infrastructure", "my own Ubuntu server: Next.js on pm2, Postgres 17, PgBouncer, Redis, Evolution API"],
+      ["Infrastructure", "a dedicated Ubuntu server we run: Next.js on pm2, Postgres 17, PgBouncer, Redis, Evolution API"],
+      ["Team", "built and run with my business partner at Comply, with the client's support team in the loop"],
     ],
-    meaning: "I can take a client's operation onto software I run myself, from the database to the server.",
+    meaning: "With a partner, I can take a client's whole operation onto software we build and run ourselves, from the database to the server.",
     tags: ["Next.js 16", "Postgres", "pgvector", "Drizzle", "Redis", "Evolution API", "Linux"],
   },
   {
@@ -271,7 +272,7 @@ export const DEEP = {
       ["Status", "Inbox, tickets, roles and knowledge search are live; the WhatsApp channel and the agent are being switched on"],
     ],
     decisions: [
-      ["Own server over PaaS", "The client wanted data on their own machine, so I run Postgres, Redis and the app on one Ubuntu box."],
+      ["Own server over PaaS", "The client wanted data on their own machine, so we run Postgres, Redis and the app on one Ubuntu box."],
       ["Next.js over the first Python plan", "One codebase with server actions shipped login, roles and writes faster than a separate API."],
       ["Idempotent intake", "WhatsApp providers retry; every message is deduplicated before it touches a conversation."],
     ],
