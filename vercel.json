@@ -1,0 +1,1 @@
+{"framework":"vite","buildCommand":"vite build","outputDirectory":"dist","installCommand":"npm install","redirects":[{"source":"/","destination":"/kevin/","permanent":false},{"source":"/kevin","destination":"/kevin/","permanent":false}]}
