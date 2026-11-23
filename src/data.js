@@ -160,7 +160,7 @@ export const REPOS = [
     sem = vectors.search(embed(q), tenant=tenant, k=40)
     fused = rrf([lex, sem], k=60)
     return reranker.rank(q, fused)[:k]` },
-  { name: "gaia-agent", lang: "Python", color: "#3572A5", desc: "Agent for the GAIA benchmark (Hugging Face Agents Course): web research, files and multi-step reasoning, with headless Claude Code as the tool loop.", proof: ["70% on GAIA (14/20)", "Parallel + cached", "Claude Code CLI"], arch: ["Questions API","Task sandbox","claude -p + tools","FINAL ANSWER","Submit"], code: `def solve(q):
+  { name: "gaia-agent", lang: "Python", color: "#3572A5", desc: "Agent for the GAIA benchmark (Hugging Face Agents Course): web research, files and multi-step reasoning, with headless Claude Code as the tool loop.", proof: ["70% on GAIA (14/20)", "Parallel + cached", "HF certified"], arch: ["Questions API","Task sandbox","claude -p + tools","FINAL ANSWER","Submit"], code: `def solve(q):
     dest = WORK / q["task_id"]          # one sandbox per task
     fetch_attachment(q, dest)
     out = run(["claude", "-p", q["question"],
@@ -531,4 +531,8 @@ export const USES = [
   ["Ship", ["Vercel for front ends", "Railway for services and workers", "Docker and my own Linux servers when the client needs it"]],
   ["Data", ["PostgreSQL everywhere, with pgvector", "Supabase when auth and RLS come built in", "Redis for cache and rate limits"]],
   ["Build", ["Next.js, React, Tailwind and Motion", "FastAPI and NestJS for APIs, Go when money is involved", "Puppeteer and ffmpeg for scraping, screenshots and the videos on this site"]],
+];
+
+export const CERTS = [
+  { name: "AI Agents Course", org: "Hugging Face", date: "Nov 2026", note: "Certificate of Excellence. Final project scored 70% on GAIA.", img: "/kevin/certs/hf-agents-course.jpg", url: "/kevin/certs/hf-agents-course.pdf", repo: "https://github.com/asunavlr/gaia-agent" },
 ];

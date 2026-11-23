@@ -13,7 +13,7 @@ import {
   useTransform,
   animate,
 } from "motion/react";
-import { CAPS, CASES, DEEP, JOBS, LINKS, NOTES, NOW, REPOS, SITES, STACK, STATS, TESTIMONIALS, USES } from "./data";
+import { CAPS, CASES, CERTS, DEEP, JOBS, LINKS, NOTES, NOW, REPOS, SITES, STACK, STATS, TESTIMONIALS, USES } from "./data";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -1398,6 +1398,27 @@ function Experience() {
           </Reveal>
         ))}
       </div>
+      <Reveal>
+        <h3 className="mt-6 font-mono text-xs uppercase tracking-widest text-soft">Certifications</h3>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {CERTS.map((c) => (
+            <div key={c.name} className="group flex gap-4 rounded-2xl border border-line bg-card p-4 transition-colors hover:border-vio/50">
+              <a href={c.url} target="_blank" rel="noreferrer" className="block w-28 shrink-0 overflow-hidden rounded-lg border border-line sm:w-36">
+                <img src={c.img} alt={`${c.name} certificate`} loading="lazy" className="w-full transition-transform duration-500 group-hover:scale-105" />
+              </a>
+              <div className="min-w-0">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-dim">{c.org} · {c.date}</div>
+                <h4 className="mt-1 font-display text-xl font-bold tracking-tight">{c.name}</h4>
+                <p className="mt-1 text-sm text-soft">{c.note}</p>
+                <div className="mt-2 flex gap-4 text-sm">
+                  <a href={c.url} target="_blank" rel="noreferrer" className="text-[#d9bf8a] hover:underline">View certificate</a>
+                  {c.repo && <a href={c.repo} target="_blank" rel="noreferrer" className="text-soft hover:text-ink hover:underline">Project code</a>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Reveal>
     </section>
   );
 }
