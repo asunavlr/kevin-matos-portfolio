@@ -453,8 +453,9 @@ export const CAPS = [
 ];
 
 /* What I'm building right now. */
-export const NOW = {
+export const NOW = [{
   name: "Hey, mate!",
+  status: "In progress · launching before I land in Dublin",
   line: "That friend who already lives in Dublin.",
   desc: "I'm moving to Dublin myself, so I'm building the guide I wish I had: an Irish-style CV generator, a moving checklist built from your arrival date, real costs with a live euro rate, a city map and a room-scam checker. English and Portuguese.",
   stack: ["Next.js", "TypeScript", "Claude", "Drizzle", "Leaflet", "i18n"],
@@ -465,7 +466,22 @@ export const NOW = {
     ["Scam check", "Paste a room listing, get a risk score and a price check"],
   ],
   shots: { main: "/kevin/shots/heymate.jpg", a: "/kevin/shots/heymate-costs.jpg", b: "/kevin/shots/heymate-check.jpg", c: "/kevin/shots/heymate-map.jpg", phone: "/kevin/shots/heymate-m.jpg", phone2: "/kevin/shots/heymate-scam-m.jpg" },
-};
+}, {
+  name: "Avodah SAC",
+  title: "Avodah SAC.",
+  status: "Live in production · built with my business partner",
+  line: "Customer service that answers before a human has to.",
+  desc: "The service hub of an eyewear distributor, which my partner and I build and run: every WhatsApp conversation in one inbox, tickets and queues, a knowledge base, dashboards, and an AI agent layer we're extending to resolve the common questions on its own.",
+  stack: ["Next.js 16", "PostgreSQL", "pgvector", "Drizzle", "Redis", "Evolution API"],
+  features: [
+    ["Inbox", "Optical stores, end customers and sales reps in one WhatsApp queue"],
+    ["AI layer", "Answers from the knowledge base, handing over to a human queue when unsure"],
+    ["Tickets", "Queues, people and permissions, with every write behind a role check"],
+    ["Knowledge", "One knowledge base that feeds both the team and the AI"],
+  ],
+  shots: { main: "/kevin/shots/sac-atendimento.jpg", a: "/kevin/shots/sac-ia.jpg", b: "/kevin/shots/sac-tickets.jpg", c: "/kevin/shots/sac-conhecimento.jpg" },
+  url: "https://sac.avodahoptical.com.br",
+}];
 
 /* Real quotes only, the section stays hidden while this is empty. [quote, name, role] */
 export const TESTIMONIALS = [];

@@ -1485,15 +1485,24 @@ function Now() {
   const y1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const y2 = useTransform(scrollYProgress, [0, 1], [160, -160]);
   const y3 = useTransform(scrollYProgress, [0, 1], [-40, 60]);
+  const [p, setP] = useState(0);
   const [f, setF] = useState(0);
-  const pics = [NOW.shots.main, NOW.shots.b, NOW.shots.a, NOW.shots.c];
+  const N = NOW[p];
+  const pics = [N.shots.main, N.shots.b, N.shots.a, N.shots.c];
   return (
     <section id="now" ref={ref} className="relative mx-auto max-w-6xl px-4 py-28 sm:px-6">
-      <SectionHead index="06" eyebrow="Now building" title={<>{NOW.name} <span className="grad">{NOW.line}</span></>} sub={NOW.desc} />
+      <div className="mb-8 flex flex-wrap gap-2">
+        {NOW.map((item, i) => (
+          <button key={item.name} onClick={() => { setP(i); setF(0); }} className={`rounded-full border px-4 py-1.5 font-mono text-xs transition-colors ${p === i ? "border-vio/60 bg-vio/10 text-ink" : "border-line text-soft hover:border-line2 hover:text-ink"}`}>
+            {item.name}
+          </button>
+        ))}
+      </div>
+      <SectionHead index="06" eyebrow="Now building" title={<>{N.title ?? N.name} <span className="grad">{N.line}</span></>} sub={N.desc} />
       <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.25fr]">
         <div>
           <div className="space-y-2">
-            {NOW.features.map(([k, v], n) => (
+            {N.features.map(([k, v], n) => (
               <button key={k} onMouseEnter={() => setF(n)} onClick={() => setF(n)} className={`relative block w-full overflow-hidden rounded-2xl border p-5 text-left transition-colors ${f === n ? "border-vio/50 bg-white/[0.03]" : "border-line hover:border-line2"}`}>
                 {f === n && <motion.span layoutId="nowbar" className="absolute inset-y-0 left-0 w-0.5 bg-vio" />}
                 <div className="flex items-baseline justify-between gap-4">
@@ -1505,12 +1514,13 @@ function Now() {
             ))}
           </div>
           <div className="mt-6 flex flex-wrap gap-1.5">
-            {NOW.stack.map((t) => (
+            {N.stack.map((t) => (
               <span key={t} className="rounded-full border border-line2 px-3 py-1 font-mono text-[11px] text-soft">{t}</span>
             ))}
           </div>
-          <div className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-dim">
-            <span className="size-1.5 animate-pulse rounded-full bg-vio" /> In progress · launching before I land in Dublin
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs text-dim">
+            <span className="inline-flex items-center gap-2"><span className="size-1.5 animate-pulse rounded-full bg-vio" /> {N.status}</span>
+            {N.url && <a href={N.url} target="_blank" rel="noreferrer" className="text-[#d9bf8a] hover:underline">Visit live ↗</a>}
           </div>
         </div>
         <div className="relative pb-10 pr-6 [perspective:1400px]">
@@ -1521,17 +1531,21 @@ function Now() {
               </div>
               <div className="relative aspect-[16/10]">
                 <AnimatePresence mode="popLayout">
-                  <motion.img key={f} src={pics[f]} alt="" initial={{ opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease }} className="absolute inset-0 h-full w-full object-cover object-top" />
+                  <motion.img key={`${p}-${f}`} src={pics[f]} alt="" initial={{ opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease }} className="absolute inset-0 h-full w-full object-cover object-top" />
                 </AnimatePresence>
               </div>
             </div>
           </motion.div>
-          <motion.div style={{ y: y2 }} className="absolute -bottom-6 right-0 w-[26%]">
-            <Phone src={NOW.shots.phone} />
-          </motion.div>
-          <motion.div style={{ y: y3 }} className="absolute -left-4 -top-8 hidden w-[24%] rotate-[-6deg] sm:block">
-            <Phone src={NOW.shots.phone2} />
-          </motion.div>
+          {N.shots.phone && (
+            <motion.div style={{ y: y2 }} className="absolute -bottom-6 right-0 w-[26%]">
+              <Phone src={N.shots.phone} />
+            </motion.div>
+          )}
+          {N.shots.phone2 && (
+            <motion.div style={{ y: y3 }} className="absolute -left-4 -top-8 hidden w-[24%] rotate-[-6deg] sm:block">
+              <Phone src={N.shots.phone2} />
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
