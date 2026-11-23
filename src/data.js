@@ -160,6 +160,13 @@ export const REPOS = [
     sem = vectors.search(embed(q), tenant=tenant, k=40)
     fused = rrf([lex, sem], k=60)
     return reranker.rank(q, fused)[:k]` },
+  { name: "gaia-agent", lang: "Python", color: "#3572A5", desc: "Agent for the GAIA benchmark (Hugging Face Agents Course): web research, files and multi-step reasoning, with headless Claude Code as the tool loop.", proof: ["70% on GAIA (14/20)", "Parallel + cached", "Claude Code CLI"], arch: ["Questions API","Task sandbox","claude -p + tools","FINAL ANSWER","Submit"], code: `def solve(q):
+    dest = WORK / q["task_id"]          # one sandbox per task
+    fetch_attachment(q, dest)
+    out = run(["claude", "-p", q["question"],
+               "--allowedTools", "WebSearch", "WebFetch", "Read", "Bash"],
+              cwd=dest, timeout=900)
+    return re.findall(r"FINAL ANSWER:\\s*(.+)", out)[-1]` },
   { name: "saas-starter", lang: "Go", color: "#00ADD8", desc: "Multi-tenant SaaS backend: transactional provisioning, RBAC, plan quotas, audit trail and Redis rate limiting.", proof: ["PostgreSQL", "Redis", "JWT"], arch: ["JWT","RBAC guard","Quota check","Tenant tx","Audit log"], code: `func Provision(ctx context.Context, t Tenant) error {
   return db.Tx(ctx, func(tx Tx) error {
     if err := tx.CreateTenant(t); err != nil { return err }
