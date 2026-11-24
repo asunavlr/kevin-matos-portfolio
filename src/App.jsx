@@ -98,33 +98,72 @@ const MENUS = [
   ["About", [["Career", [["Experience", "#experience"], ["Certifications", "#certs"], ["Engineering notes", "#notes"]]], ["Contact", [["Email", `mailto:${LINKS.email}`], ["LinkedIn", LINKS.linkedin], ["GitHub", LINKS.github]]]]],
 ];
 
-function Search({ onClose }) {
-  const [q, setQ] = useState("");
+/* Mosaico circular de miniaturas dos trabalhos, girando devagar, como na busca da referência. */
+const THUMBS = [...CASES.map((c) => `/kevin/shots/card-${c.id}.jpg`), ...SITES.map((x) => x.shot)];
+const DOTS = (() => {
+  const out = [];
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+  for (let ring = 1; ring <= 11; ring++) {
+    const r = ring * 29;
+    const n = Math.round(ring * 6.3);
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + ring * 0.37;
+      out.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, s: 7 + rnd() * 7, img: THUMBS[Math.floor(rnd() * THUMBS.length)], pos: `${Math.floor(rnd() * 100)}% ${Math.floor(rnd() * 100)}%`, d: ring * 0.03 + rnd() * 0.2 });
+    }
+  }
+  return out;
+})();
+
+const TOP = ["Avodah SAC", "Goiás Direto", "AgroPujante", "RAG", "Go", "Anthropic", "English C2"];
+
+function Search({ q, onClose }) {
   useLock(true);
   const all = [
-    ...CASES.map((c) => ["Project", c.name, `#project/${c.id}`]),
-    ...SITES.map((x) => ["Client site", x.name, x.url]),
-    ...REPOS.map((r) => ["Open source", r.name, `${LINKS.github}/${r.name}`]),
-    ...CERTS.map((c) => ["Certificate", `${c.name} · ${c.org}`, c.verify || c.url]),
-    ...NOTES.map((n) => ["Note", n.title, "#notes"]),
+    ...CASES.map((c) => ["Project", c.name, `#project/${c.id}`, c.lede]),
+    ...SITES.map((x) => ["Client site", x.name, x.url, x.what]),
+    ...REPOS.map((r) => ["Open source", r.name, `${LINKS.github}/${r.name}`, `${r.lang} · ${r.desc}`]),
+    ...CERTS.map((c) => ["Certificate", c.name, c.verify || c.url, c.org]),
+    ...NOTES.map((n) => ["Note", n.title, "#notes", n.tldr]),
   ];
-  const hits = all.filter((h) => h[1].toLowerCase().includes(q.toLowerCase())).slice(0, 8);
-  useEffect(() => {
-    const k = (e) => e.key === "Escape" && onClose();
-    addEventListener("keydown", k);
-    return () => removeEventListener("keydown", k);
-  }, [onClose]);
+  const term = q.trim().toLowerCase();
+  const hits = term ? all.filter((h) => `${h[1]} ${h[3]} ${h[0]}`.toLowerCase().includes(term)).slice(0, 10) : [];
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-[80] bg-ink/25 px-4 pt-[14vh] backdrop-blur-sm">
-      <motion.div initial={{ y: -8 }} animate={{ y: 0 }} onClick={(e) => e.stopPropagation()} className="mx-auto max-w-lg overflow-hidden rounded-xl border border-line bg-bg shadow-2xl">
-        <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search projects, clients, certificates" className="w-full border-b border-line bg-transparent px-4 py-3.5 text-[15px] outline-none" />
-        <ul className="max-h-[50vh] overflow-y-auto p-1.5">
-          {hits.map(([k, t, href]) => (
-            <li key={k + t}><a href={href} onClick={onClose} {...ext(href)} className="flex items-baseline justify-between gap-4 rounded-lg px-3 py-2 text-[14px] hover:bg-card"><span>{t}</span><span className="shrink-0 text-[12px] text-mute">{k}</span></a></li>
-          ))}
-          {!hits.length && <li className="px-3 py-6 text-center text-[14px] text-mute">Nothing found.</li>}
-        </ul>
-      </motion.div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-x-0 bottom-0 top-[84px] z-40 overflow-y-auto bg-bg">
+      <div className={`${W} grid min-h-full items-center gap-10 py-10 lg:grid-cols-[1.4fr_1fr]`}>
+        <div className="relative mx-auto hidden aspect-square w-full max-w-[640px] lg:block">
+          <motion.div className="absolute inset-0" animate={{ rotate: 360 }} transition={{ duration: 240, ease: "linear", repeat: Infinity }}>
+            {DOTS.map((d, i) => (
+              <motion.span key={i} initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: d.d, duration: 0.5 }}
+                className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos }} />
+            ))}
+          </motion.div>
+        </div>
+        <div>
+          {!term ? (
+            <>
+              <p className="text-[19px] font-semibold">Top searches</p>
+              <div className="mt-5 flex flex-col items-start gap-2.5">
+                {TOP.map((t) => <span key={t} data-top={t} className="cursor-pointer rounded-full border border-line bg-card px-4 py-1.5 text-[14px] hover:bg-card2">{t}</span>)}
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-[13px] text-mute">{hits.length ? `${hits.length} results` : "Nothing found."}</p>
+              <ul className="mt-4 divide-y divide-line border-y border-line">
+                {hits.map(([k, t, href, sub]) => (
+                  <li key={k + t}>
+                    <a href={href} onClick={onClose} {...ext(href)} className="block py-3.5 hover:opacity-70">
+                      <span className="flex items-baseline justify-between gap-4"><span className="text-[15px] font-medium">{t}</span><span className="shrink-0 text-[12px] text-mute">{k}</span></span>
+                      {sub && <span className="mt-0.5 line-clamp-1 block text-[13px] text-mute">{sub}</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -217,6 +256,15 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState(null);
   const [search, setSearch] = useState(false);
+  const [q, setQ] = useState("");
+  const closeSearch = () => { setSearch(false); setQ(""); };
+  useEffect(() => {
+    if (!search) return;
+    const k = (e) => e.key === "Escape" && closeSearch();
+    const pick = (e) => { const t = e.target.closest?.("[data-top]"); if (t) setQ(t.dataset.top); };
+    addEventListener("keydown", k); addEventListener("click", pick);
+    return () => { removeEventListener("keydown", k); removeEventListener("click", pick); };
+  }, [search]);
   useEffect(() => {
     const on = () => {
       setCompact(scrollY > 40);
@@ -247,10 +295,24 @@ function Header() {
             <Wordmark compact={compact} className="text-[24px]" />
           </a>
           <div className="flex items-center justify-end gap-2.5">
-            <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
-            <button onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Search">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
-            </button>
+            {search ? (
+              <>
+                <label className="flex h-8 w-[min(420px,50vw)] items-center gap-2 rounded-[10px] border-2 border-[#1f3a8a] bg-bg px-3">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
+                  <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Enter search..." className="w-full bg-transparent text-[14px] outline-none placeholder:text-mute" />
+                </label>
+                <button onClick={closeSearch} className="grid size-8 place-items-center rounded-[10px] bg-ink text-bg" aria-label="Close search">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                </button>
+              </>
+            ) : (
+              <>
+                <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
+                <button onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Search">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
+                </button>
+              </>
+            )}
             <button onClick={() => setOpen(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Open menu">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M4 7h16M4 12h12M4 17h8" /></svg>
             </button>
@@ -276,7 +338,7 @@ function Header() {
         </AnimatePresence>
       </header>
       <div className="h-[84px]" />
-      <AnimatePresence>{search && <Search onClose={() => setSearch(false)} />}</AnimatePresence>
+      <AnimatePresence>{search && <Search q={q} onClose={closeSearch} />}</AnimatePresence>
       <AnimatePresence>{open && <FullMenu onClose={() => setOpen(false)} />}</AnimatePresence>
     </>
   );
