@@ -52,13 +52,14 @@ function Wordmark({ compact = false, className = "" }) {
     return () => { clearTimeout(t); removeEventListener("resize", measure); };
   }, [compact]);
   const move = "inline-block transition-transform duration-[600ms] ease-[cubic-bezier(.65,0,.35,1)]";
-  const fade = `inline-block whitespace-pre transition-opacity duration-300 ${compact ? "opacity-0" : "opacity-100 delay-200"}`;
+  /* As letras andam junto com o K, como se ele empurrasse tudo, e somem no caminho. */
+  const fade = `inline-block whitespace-pre transition-[transform,opacity] duration-[600ms] ease-[cubic-bezier(.65,0,.35,1)] ${compact ? "opacity-0" : "opacity-100"}`;
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
       <span ref={k} className={move} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>K</span>
-      <span className={fade}>EVIN MA</span>
+      <span className={fade} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>EVIN MA</span>
       <span ref={sl} className={move} style={{ transform: `translateX(${compact ? dx[1] : 0}px)` }}>{"\\"}</span>
-      <span className={fade}>OS</span>
+      <span className={fade} style={{ transform: `translateX(${compact ? dx[1] : 0}px)` }}>OS</span>
     </span>
   );
 }
