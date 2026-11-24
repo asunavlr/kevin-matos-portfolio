@@ -51,15 +51,18 @@ function Wordmark({ compact = false, className = "" }) {
     addEventListener("resize", measure);
     return () => { clearTimeout(t); removeEventListener("resize", measure); };
   }, [compact]);
-  /* Recolhendo: primeiro as letras somem, depois o K e a \ se encaixam. Abrindo: o contrário. */
-  const move = `inline-block transition-transform duration-500 ease-[cubic-bezier(.65,0,.35,1)] ${compact ? "delay-[250ms]" : ""}`;
-  /* As letras andam junto com o K, como se ele empurrasse tudo, e somem no caminho. */
+  /* Recolhendo: o K anda até o centro empurrando "EVIN MA", que some no caminho;
+     o "OS" some logo, e só então a \ desliza e encaixa no K. Abrindo: o contrário. */
+  const ez = "ease-[cubic-bezier(.65,0,.35,1)]";
+  const kMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "" : "delay-[150ms]"}`;
+  const slMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "delay-[300ms]" : ""}`;
+  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-500 ${ez} ${compact ? "opacity-0" : "opacity-100 delay-[150ms]"}`;
   const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-300 delay-[450ms]"}`;
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
-      <span ref={k} className={move} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>K</span>
-      <span className={fade}>EVIN MA</span>
-      <span ref={sl} className={move} style={{ transform: `translateX(${compact ? dx[1] : 0}px)` }}>{"\\"}</span>
+      <span ref={k} className={kMove} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>K</span>
+      <span className={pushed} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>EVIN MA</span>
+      <span ref={sl} className={slMove} style={{ transform: `translateX(${compact ? dx[1] : 0}px)` }}>{"\\"}</span>
       <span className={fade}>OS</span>
     </span>
   );
