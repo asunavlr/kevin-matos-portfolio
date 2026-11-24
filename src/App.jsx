@@ -28,14 +28,37 @@ function Reveal({ children, className = "", delay = 0 }) {
 
 const Arrow = ({ className = "" }) => <svg className={className} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M8 7h9v9" /></svg>;
 const Chev = ({ up, className = "" }) => <svg className={`transition-transform duration-200 ${up ? "rotate-180" : ""} ${className}`} width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m6 9 6 6 6-6" /></svg>;
-/* KEVIN MA\OS: a barra entra no lugar do T. Compacto, o resto recolhe e sobra K\. */
+/* KEVIN MA\OS: a barra entra no lugar do T. Compacto, as outras letras somem
+   enquanto o K e a \ deslizam ao mesmo tempo para o meio, formando K\. */
 function Wordmark({ compact = false, className = "" }) {
-  const part = (t, w) => (
-    <span className="inline-block overflow-hidden whitespace-pre align-bottom transition-[max-width,opacity] duration-500 ease-[cubic-bezier(.22,1,.36,1)]" style={{ maxWidth: compact ? 0 : w, opacity: compact ? 0 : 1 }}>{t}</span>
-  );
+  const box = useRef(null);
+  const k = useRef(null);
+  const sl = useRef(null);
+  const [dx, setDx] = useState([0, 0]);
+  useEffect(() => {
+    /* offsetLeft ignora o transform, então a medida vale mesmo no meio da animação. */
+    const measure = () => {
+      if (!box.current) return;
+      const W = box.current.offsetWidth;
+      const kl = k.current.offsetLeft, kw = k.current.offsetWidth;
+      const sll = sl.current.offsetLeft, sw = sl.current.offsetWidth;
+      const left = W / 2 - (kw + sw) / 2;
+      setDx([left - kl, left + kw - sll]);
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    const t = setTimeout(measure, 800);
+    addEventListener("resize", measure);
+    return () => { clearTimeout(t); removeEventListener("resize", measure); };
+  }, [compact]);
+  const move = "inline-block transition-transform duration-[600ms] ease-[cubic-bezier(.65,0,.35,1)]";
+  const fade = `inline-block whitespace-pre transition-opacity duration-300 ${compact ? "opacity-0" : "opacity-100 delay-200"}`;
   return (
-    <span className={`inline-flex whitespace-nowrap font-semibold tracking-[0.08em] ${className}`}>
-      K{part("EVIN MA", "6.2em")}<span className="tracking-[0.08em]">{"\\"}</span>{part("OS", "1.9em")}
+    <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
+      <span ref={k} className={move} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>K</span>
+      <span className={fade}>EVIN MA</span>
+      <span ref={sl} className={move} style={{ transform: `translateX(${compact ? dx[1] : 0}px)` }}>{"\\"}</span>
+      <span className={fade}>OS</span>
     </span>
   );
 }
