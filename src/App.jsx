@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, animate, motion, useMotionValue, useScroll, useTransform } from "motion/react";
 import { Analytics } from "@vercel/analytics/react";
 import { CASES, CERTS, JOBS, LINKS, NOTES, REPOS, SITES, STATS, TESTIMONIALS } from "./data";
 
@@ -54,21 +54,38 @@ function Wordmark({ compact = false, className = "" }) {
     addEventListener("resize", measure);
     return () => { clearTimeout(t); removeEventListener("resize", measure); };
   }, []);
-  /* Um só movimento, rápido no início e freando até parar (ease-out forte, como o
-     gráfico de velocidade inverso do After Effects). O K empurra as letras, que somem
-     no caminho, e a \\ chega junto com ele no centro. */
-  const out = [0.16, 1, 0.3, 1];
-  const T = { duration: 0.9, ease: out };
-  const back = { duration: 0.7, ease: out };
-  const pos = (end) => (compact ? end : 0);
-  const word = compact ? { x: dx[0], opacity: 0 } : { x: 0, opacity: 1 };
-  const wordT = compact ? { x: T, opacity: { duration: 0.25, ease: "easeOut" } } : { x: back, opacity: { duration: 0.4, delay: 0.25 } };
+  /* Recolhendo: o K anda até o centro empurrando "EVIN MA", que some no caminho;
+     o "OS" some logo, e só então a \ desliza e encaixa no K. Abrindo: o contrário. */
+  const ez = "ease-[cubic-bezier(.45,0,.2,1)]";
+  /* A \\ segue o K: é empurrada junto e, na reta final, desliza para encaixar,
+     chegando no centro no mesmo instante que ele. */
+  const kx = useMotionValue(0);
+  useEffect(() => {
+    const c = animate(kx, compact ? dx[0] : 0, { duration: 0.8, ease: [0.45, 0, 0.2, 1] });
+    return () => c.stop();
+  }, [compact, dx, kx]);
+  const slx = useTransform(kx, (v) => {
+    if (!dx[0]) return 0;
+    const p = Math.min(1, Math.max(0, v / dx[0]));
+    const t = Math.min(1, Math.max(0, (p - 0.45) / 0.55));
+    const q = t * t * (3 - 2 * t);
+    return v * (1 - q) + dx[1] * q;
+  });
+  const kMove = `inline-block transition-transform duration-[350ms] ${ez} ${compact ? "" : "delay-100"}`;
+  const slMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "delay-[300ms]" : ""}`;
+  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-[800ms] ${ez} ${compact ? "opacity-0" : "opacity-100"}`;
+  const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-200 delay-300"}`;
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
-      <motion.span ref={k} className="inline-block" initial={false} animate={{ x: pos(dx[0]) }} transition={compact ? T : back}>K</motion.span>
-      <motion.span className="inline-block whitespace-pre" initial={false} animate={word} transition={wordT}>EVIN MA</motion.span>
-      <motion.span ref={sl} className="inline-block" initial={false} animate={{ x: pos(dx[1]) }} transition={compact ? T : back}>{"\\"}</motion.span>
-      <motion.span className="inline-block whitespace-pre" initial={false} animate={word} transition={wordT}>OS</motion.span>
+      <motion.span ref={k} className="inline-block" style={{ x: kx }}>K</motion.span>
+      <span className={pushed} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>EVIN MA</span>
+      {/* A \ é empurrada junto com o K e depois volta para encaixar nele. */}
+      <motion.span
+        ref={sl}
+        className="inline-block"
+        style={{ x: slx }}
+      >{"\\"}</motion.span>
+      <span className={fade}>OS</span>
     </span>
   );
 }
