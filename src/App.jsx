@@ -263,9 +263,9 @@ function Hero() {
   const clip = useTransform(inset, (i) => `inset(0 ${i}% round ${i * 2}px)`);
   return (
     <section id="top">
-      <div className={`${W} pb-14 pt-12 sm:pt-16`}>
+      <div className={`${W} select-none pb-14 pt-12 sm:pt-16`}>
         <Reveal>
-          <h1 className="w-fit max-w-[1100px] text-[26px] leading-[1.22] tracking-[-0.015em] sm:text-[34px]">
+          <h1 className="w-fit max-w-[1100px] select-text text-[26px] leading-[1.22] tracking-[-0.015em] sm:text-[34px]">
             <span className="font-semibold">Full stack & AI engineer building software that ships.</span>{" "}
             <span className="font-serif text-[1.06em]">Production SaaS, LLM agents and 40+ websites for real clients, end to end: architecture, databases, APIs and deployment. Relocating to Dublin in January 2027.</span>
           </h1>
