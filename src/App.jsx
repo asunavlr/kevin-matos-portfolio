@@ -111,12 +111,12 @@ const DOTS = (() => {
   const out = [];
   let seed = 7;
   const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
-  for (let ring = 1; ring <= 11; ring++) {
-    const r = ring * 29;
-    const n = Math.round(ring * 6.3);
+  for (let ring = 1; ring <= 8; ring++) {
+    const r = ring * 26;
+    const n = Math.round(ring * 6);
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2 + ring * 0.37;
-      out.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, s: 7 + rnd() * 7, img: THUMBS[Math.floor(rnd() * THUMBS.length)], pos: `${Math.floor(rnd() * 100)}% ${Math.floor(rnd() * 100)}%`, d: ring * 0.03 + rnd() * 0.2 });
+      out.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, s: 6 + rnd() * 6, img: THUMBS[Math.floor(rnd() * THUMBS.length)], pos: `${Math.floor(rnd() * 100)}% ${Math.floor(rnd() * 100)}%`, d: ring * 0.03 + rnd() * 0.2 });
     }
   }
   return out;
@@ -137,21 +137,20 @@ function Search({ q, onClose }) {
   const hits = term ? all.filter((h) => `${h[1]} ${h[3]} ${h[0]}`.toLowerCase().includes(term)).slice(0, 10) : [];
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-x-0 bottom-0 top-[84px] z-40 overflow-y-auto bg-bg">
-      <div className={`${W} grid min-h-full items-center gap-10 py-10 lg:grid-cols-[1.4fr_1fr]`}>
-        <div className="relative mx-auto hidden aspect-square w-full max-w-[640px] lg:block">
-          <motion.div className="absolute inset-0" animate={{ rotate: 360 }} transition={{ duration: 240, ease: "linear", repeat: Infinity }}>
+      <div className={`${W} grid min-h-[calc(100svh-84px)] items-center gap-10 py-10 lg:grid-cols-[1fr_340px]`}>
+        <div className="relative mx-auto hidden aspect-square w-full max-w-[440px] lg:block">
+          <div className="absolute inset-0 animate-[spin_240s_linear_infinite] will-change-transform">
             {DOTS.map((d, i) => (
-              <motion.span key={i} initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: d.d, duration: 0.5 }}
-                className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos }} />
+              <span key={i} className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos }} />
             ))}
-          </motion.div>
+          </div>
         </div>
         <div>
           {!term ? (
             <>
-              <p className="text-[19px] font-semibold">Top searches</p>
-              <div className="mt-5 flex flex-col items-start gap-2.5">
-                {TOP.map((t) => <span key={t} data-top={t} className="cursor-pointer rounded-full border border-line bg-card px-4 py-1.5 text-[14px] hover:bg-card2">{t}</span>)}
+              <p className="text-[16px] font-semibold">Top searches</p>
+              <div className="mt-4 flex flex-col items-start gap-2">
+                {TOP.map((t) => <span key={t} data-top={t} className="cursor-pointer rounded-full border border-line bg-card px-3.5 py-1 text-[13px] hover:bg-card2">{t}</span>)}
               </div>
             </>
           ) : (
@@ -171,6 +170,7 @@ function Search({ q, onClose }) {
           )}
         </div>
       </div>
+      <Footer inSearch />
     </motion.div>
   );
 }
@@ -740,7 +740,7 @@ function FootMark() {
   return <motion.p ref={ref} style={{ opacity }} className="self-start text-[28px] sm:text-[34px]"><Wordmark /></motion.p>;
 }
 
-function Footer() {
+function Footer({ inSearch = false }) {
   const rows = [
     ["Work", CASES.map((c) => [c.name, `#project/${c.id}`])],
     ["Client sites", SITES.map((s) => [s.name, s.url])],
@@ -750,7 +750,7 @@ function Footer() {
     ["Notes", NOTES.map((n) => [n.title, "#notes"])],
   ];
   return (
-    <footer id="footer" className="flex min-h-[100svh] flex-col justify-between bg-[#141413] pt-16 text-[#faf9f5]">
+    <footer id={inSearch ? undefined : "footer"} className="flex min-h-[100svh] flex-col justify-between bg-[#141413] pt-16 text-[#faf9f5]">
       <div className={`${W} grid w-full gap-10 pb-10 pt-10 lg:grid-cols-[1fr_1.7fr]`}>
         <FootMark />
         <div className="border-b border-white/15">{rows.map(([t, items]) => <FootRow key={t} title={t} items={items} />)}</div>
