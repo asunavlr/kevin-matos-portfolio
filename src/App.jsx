@@ -67,13 +67,13 @@ function Wordmark({ compact = false, className = "" }) {
   const slx = useTransform(kx, (v) => {
     if (!dx[0]) return 0;
     const p = Math.min(1, Math.max(0, v / dx[0]));
-    const t = Math.min(1, Math.max(0, (p - 0.45) / 0.55));
+    const t = Math.min(1, Math.max(0, (p - 0.7) / 0.3));
     const q = t * t * (3 - 2 * t);
     return v * (1 - q) + dx[1] * q;
   });
   const kMove = `inline-block transition-transform duration-[350ms] ${ez} ${compact ? "" : "delay-100"}`;
   const slMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "delay-[300ms]" : ""}`;
-  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-[800ms] ${ez} ${compact ? "opacity-0" : "opacity-100"}`;
+  const pushed = `inline-block whitespace-pre transition-[transform,opacity] [transition-duration:800ms,250ms] ${ez} ${compact ? "opacity-0" : "opacity-100 [transition-delay:0ms,450ms]"}`;
   const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-200 delay-300"}`;
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
