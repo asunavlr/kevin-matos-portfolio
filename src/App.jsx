@@ -292,7 +292,7 @@ function Header() {
             <a href="#certs" onMouseEnter={() => setMenu(null)} className={pill(false)}>Certifications</a>
           </nav>
           <span className="lg:hidden" />
-          <a href="#top" aria-label="Kevin Matos" className="relative grid h-8 w-[220px] place-items-center">
+          <a href="#top" onClick={(e) => { e.preventDefault(); if (search) closeSearch(); setMenu(null); history.pushState(null, "", location.pathname); dispatchEvent(new HashChangeEvent("hashchange")); scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="Kevin Matos" className="relative grid h-8 w-[220px] place-items-center">
             <Wordmark compact={compact} className="text-[24px]" />
           </a>
           <div className="flex items-center justify-end gap-2.5">
