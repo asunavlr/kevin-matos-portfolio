@@ -221,9 +221,9 @@ function Hero() {
         </div>
         <span className="absolute bottom-3 right-4 text-[11px] text-white/60">Photo: P. Hughes, CC BY 4.0</span>
       </motion.div>
-      <div className={`${W} grid grid-cols-2 sm:grid-cols-4`}>
+      <div className={`${W} mt-16 grid grid-cols-2 gap-y-8 sm:mt-20 sm:grid-cols-4`}>
         {STATS.map((s, i) => (
-          <Reveal key={s.label} delay={i * 0.04} className={`py-8 pr-5 ${i ? "sm:border-l sm:border-line sm:pl-6" : ""}`}>
+          <Reveal key={s.label} delay={i * 0.04} className={`py-2 pr-5 ${i ? "sm:border-l sm:border-line sm:pl-6" : ""}`}>
             <div className="font-serif text-[32px] leading-none">{s.prefix}{s.n}{s.suffix}</div>
             <p className="mt-2 text-[13px] leading-snug text-mute">{s.label}</p>
           </Reveal>
