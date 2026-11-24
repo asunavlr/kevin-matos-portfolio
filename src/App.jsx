@@ -231,13 +231,13 @@ function Header() {
         <AnimatePresence>
           {menu && (
             <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18, ease }} className="absolute left-1/2 top-[56px] hidden w-[1280px] max-w-full -translate-x-1/2 px-5 sm:px-10 lg:block">
-              <div className="w-[440px] rounded-xl border border-line bg-bg p-5 text-ink shadow-[0_16px_40px_rgba(0,0,0,.07)]">
+              <div className="w-[460px] rounded-2xl border border-line bg-bg px-6 py-4 text-ink shadow-[0_16px_40px_rgba(0,0,0,.07)]">
                 <div className="grid grid-cols-2 gap-8">
                   {MENUS.find((m) => m[0] === menu)[1].map(([h, items]) => (
                     <div key={h}>
                       <p className="text-[13px] text-mute">{h}</p>
-                      <ul className="mt-2.5 space-y-2">
-                        {items.map(([t, href]) => <li key={t}><a href={href} onClick={() => setMenu(null)} {...ext(href)} className="text-[14px] hover:text-clay">{t}</a></li>)}
+                      <ul className="mt-1.5">
+                        {items.map(([t, href]) => <li key={t}><a href={href} onClick={() => setMenu(null)} {...ext(href)} className="-mx-3 block rounded-lg px-3 py-2 text-[14px] transition-colors hover:bg-card2">{t}</a></li>)}
                       </ul>
                     </div>
                   ))}
