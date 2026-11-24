@@ -204,10 +204,10 @@ function FullMenu({ onClose }) {
           })}
         </div>
         <div className="flex flex-col overflow-y-auto overscroll-contain pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between bg-[#141413] lg:justify-end">
+          <div className="sticky top-0 z-10 flex h-[84px] shrink-0 items-center justify-between bg-[#141413] lg:justify-end">
             <Wordmark className="text-[17px] lg:hidden" />
-            <button onClick={onClose} className="grid size-9 place-items-center rounded-lg border border-white/20 hover:border-white/50" aria-label="Close menu">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+            <button onClick={onClose} className="grid size-8 place-items-center rounded-[10px] border border-white/15 bg-white/5 hover:bg-white/10" aria-label="Close menu">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
             </button>
           </div>
           <nav className="pt-10">
