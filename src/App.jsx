@@ -19,56 +19,116 @@ function Arrow({ className = "" }) {
   return <svg className={className} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M8 7h9v9" /></svg>;
 }
 
-/* ---------- header: logo no centro encolhe para KM ao descer; fica escuro sobre o footer ---------- */
+/* ---------- header: menus que abrem no hover, logo troca para a marca K\ ao descer ---------- */
+
+function Wordmark({ className = "" }) {
+  return <span className={`whitespace-nowrap font-semibold tracking-[0.16em] ${className}`}>KEVIN MATOS</span>;
+}
+
+const MENUS = () => [
+  ["Work", [["Products", CASES.map((c) => [c.name, `#project/${c.id}`])], ["Open source", REPOS.slice(0, 4).map((r) => [r.name, `${LINKS.github}/${r.name}`])]]],
+  ["Clients", [["Client sites", SITES.slice(0, 6).map((x) => [x.name, x.url])], ["More", [["All 40+ sites", "#clients"], ["Client feedback", "#feedback"], ["Comply studio", LINKS.studio]]]]],
+  ["About", [["Career", [["Experience", "#experience"], ["Certifications", "#certs"], ["Engineering notes", "#notes"]]], ["Contact", [["Email", `mailto:${LINKS.email}`], ["LinkedIn", LINKS.linkedin], ["GitHub", LINKS.github]]]]],
+];
+
+function Search({ onClose }) {
+  const [q, setQ] = useState("");
+  const all = [
+    ...CASES.map((c) => ["Project", c.name, `#project/${c.id}`]),
+    ...SITES.map((x) => ["Client site", x.name, x.url]),
+    ...REPOS.map((r) => ["Open source", r.name, `${LINKS.github}/${r.name}`]),
+    ...CERTS.map((c) => ["Certificate", `${c.name} · ${c.org}`, c.verify || c.url]),
+    ...NOTES.map((n) => ["Note", n.title, "#notes"]),
+  ];
+  const hits = all.filter((h) => h[1].toLowerCase().includes(q.toLowerCase())).slice(0, 8);
+  useEffect(() => {
+    const k = (e) => e.key === "Escape" && onClose();
+    addEventListener("keydown", k);
+    return () => removeEventListener("keydown", k);
+  }, [onClose]);
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-[80] bg-ink/25 px-4 pt-[14vh] backdrop-blur-sm">
+      <motion.div initial={{ y: -8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} onClick={(e) => e.stopPropagation()} className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl">
+        <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search projects, clients, certificates..." className="w-full border-b border-line bg-transparent px-5 py-4 text-[16px] outline-none" />
+        <ul className="max-h-[50vh] overflow-y-auto p-2">
+          {hits.map(([k, t, href]) => (
+            <li key={k + t}><a href={href} onClick={onClose} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className="flex items-baseline justify-between gap-4 rounded-xl px-3 py-2.5 hover:bg-card"><span>{t}</span><span className="shrink-0 text-[13px] text-mute">{k}</span></a></li>
+          ))}
+          {!hits.length && <li className="px-3 py-6 text-center text-mute">Nothing found.</li>}
+        </ul>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 function Header() {
   const [compact, setCompact] = useState(false);
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState(null);
+  const [search, setSearch] = useState(false);
   useEffect(() => {
     const on = () => {
       setCompact(scrollY > 60);
       const f = document.getElementById("footer");
-      setDark(!!f && f.getBoundingClientRect().top < innerHeight * 0.4);
+      setDark(!!f && f.getBoundingClientRect().top < 72);
     };
     on();
     addEventListener("scroll", on, { passive: true });
     return () => removeEventListener("scroll", on);
   }, []);
   useEffect(() => { document.body.style.overflow = open ? "hidden" : ""; }, [open]);
-  const pill = `rounded-full border px-4 py-2 text-[14px] transition-colors ${dark ? "border-white/15 hover:bg-white/10" : "border-line hover:bg-card"}`;
+  const pill = (on) => `flex items-center gap-1.5 rounded-full border px-4 py-2 text-[14px] transition-colors duration-200 ${on ? (dark ? "border-white bg-white text-ink" : "border-ink bg-ink text-bg") : dark ? "border-white/15 hover:border-white/40" : "border-line hover:border-ink/30"}`;
+  const Chev = ({ up }) => <svg className={`transition-transform duration-200 ${up ? "rotate-180" : ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m6 9 6 6 6-6" /></svg>;
   return (
     <>
-      <header className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${dark ? "bg-[#141413] text-[#faf9f5]" : "bg-bg text-ink"}`}>
+      <header onMouseLeave={() => setMenu(null)} className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${dark ? "bg-[#141413] text-[#faf9f5]" : "bg-bg text-ink"}`}>
         <div className="mx-auto grid h-[72px] max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 sm:px-8">
           <nav className="hidden items-center gap-2 lg:flex">
-            {NAV.slice(0, 4).map(([t, id]) => <a key={id} href={`#${id}`} className={pill}>{t}</a>)}
+            {MENUS().map(([t]) => (
+              <button key={t} onMouseEnter={() => setMenu(t)} onClick={() => setMenu(menu === t ? null : t)} className={pill(menu === t)}>{t}<Chev up={menu === t} /></button>
+            ))}
+            <a href="#certs" onMouseEnter={() => setMenu(null)} className={pill(false)}>Certifications</a>
           </nav>
           <span className="lg:hidden" />
-          <a href="#top" aria-label="Kevin Matos" className="relative grid h-8 place-items-center">
-            <AnimatePresence mode="popLayout" initial={false}>
-              {compact ? (
-                <motion.span key="km" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.3, ease }} className="text-[24px] font-extrabold tracking-[-0.04em]">K\M</motion.span>
-              ) : (
-                <motion.span key="full" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }} transition={{ duration: 0.3, ease }} className="whitespace-nowrap text-[20px] font-bold tracking-[0.14em] sm:text-[26px]">KEVIN MATOS</motion.span>
-              )}
-            </AnimatePresence>
+          <a href="#top" aria-label="Kevin Matos" className="relative grid h-8 w-[190px] place-items-center overflow-hidden sm:w-[230px]">
+            <span className={`absolute text-[19px] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] sm:text-[24px] ${compact ? "-translate-y-3 opacity-0 blur-[2px]" : "translate-y-0 opacity-100"}`}><Wordmark /></span>
+            <span className={`absolute text-[24px] font-bold tracking-[-0.02em] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${compact ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0 blur-[2px]"}`}>K\</span>
           </a>
           <div className="flex items-center justify-end gap-2">
-            {NAV.slice(4).map(([t, id]) => <a key={id} href={`#${id}`} className={`hidden xl:block ${pill}`}>{t}</a>)}
-            <a href={LINKS.cv} target="_blank" rel="noreferrer" className={`hidden sm:block ${pill}`}>Download CV</a>
-            <button onClick={() => setOpen(true)} className={`grid size-10 place-items-center rounded-xl border ${dark ? "border-white/15" : "border-line"}`} aria-label="Open menu">
+            <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
+            <button onClick={() => setSearch(true)} className={`grid size-10 place-items-center rounded-full border transition-colors ${dark ? "border-white/15 hover:border-white/40" : "border-line hover:border-ink/30"}`} aria-label="Search">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            </button>
+            <button onClick={() => setOpen(true)} className={`grid size-10 place-items-center rounded-xl border transition-colors ${dark ? "border-white/15 hover:border-white/40" : "border-line hover:border-ink/30"}`} aria-label="Open menu">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h10" /></svg>
             </button>
           </div>
         </div>
+        <AnimatePresence>
+          {menu && (
+            <motion.div key={menu} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2, ease }} className="absolute left-5 top-[64px] hidden min-w-[460px] rounded-2xl border border-line bg-bg p-6 text-ink shadow-[0_20px_50px_rgba(0,0,0,.08)] sm:left-8 lg:block">
+              <div className="grid grid-cols-2 gap-10">
+                {MENUS().find((m) => m[0] === menu)[1].map(([h, items]) => (
+                  <div key={h}>
+                    <p className="text-[14px] text-mute">{h}</p>
+                    <ul className="mt-3 space-y-2.5">
+                      {items.map(([t, href]) => <li key={t}><a href={href} onClick={() => setMenu(null)} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className="text-[15px] transition-colors hover:text-clay">{t}</a></li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
       <div className="h-[72px]" />
+      <AnimatePresence>{search && <Search onClose={() => setSearch(false)} />}</AnimatePresence>
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] flex flex-col bg-bg px-6 pb-10 pt-5">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-bg px-6 pb-10 pt-5">
             <div className="flex items-center justify-between">
-              <span className="text-[20px] font-bold tracking-[0.14em]">KEVIN MATOS</span>
+              <Wordmark className="text-[19px]" />
               <button onClick={() => setOpen(false)} className="grid size-10 place-items-center rounded-xl border border-line" aria-label="Close menu">✕</button>
             </div>
             <nav className="mx-auto mt-12 flex w-full max-w-3xl flex-col">
@@ -76,7 +136,7 @@ function Header() {
                 <motion.a key={id} href={`#${id}`} onClick={() => setOpen(false)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 * i, ease }} className="border-b border-line py-4 font-serif text-3xl sm:text-5xl">{t}</motion.a>
               ))}
             </nav>
-            <a href={LINKS.cv} target="_blank" rel="noreferrer" className="mx-auto mt-auto w-full max-w-3xl rounded-full bg-ink py-4 text-center font-medium text-bg">Download CV</a>
+            <a href={LINKS.cv} target="_blank" rel="noreferrer" className="mx-auto mt-10 w-full max-w-3xl rounded-full bg-ink py-4 text-center font-medium text-bg">Download CV</a>
           </motion.div>
         )}
       </AnimatePresence>
@@ -86,36 +146,43 @@ function Header() {
 
 /* ---------- topo ---------- */
 
+/* Arte em blocos, no espírito das ilustrações editoriais: cores da paleta, sem print de produto. */
+function Art({ seed = 1, className = "" }) {
+  const cols = ["#d97757", "#e8e6dc", "#6a9bcc", "#788c5d", "#bcd1ca", "#141413", "#ebcece", "#cbcadb"];
+  let x = seed * 9301 + 49297;
+  const r = () => ((x = (x * 9301 + 49297) % 233280) / 233280);
+  const cells = Array.from({ length: 48 }, () => cols[Math.floor(r() * cols.length)]);
+  return (
+    <div className={`grid grid-cols-8 grid-rows-6 ${className}`}>
+      {cells.map((c, i) => <motion.span key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: (i % 8) * 0.03 + Math.floor(i / 8) * 0.03, duration: 0.6 }} style={{ background: c }} />)}
+    </div>
+  );
+}
+
 function Hero() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "start start"] });
   const inset = useTransform(scrollYProgress, [0.25, 1], [6, 0]);
-  const radius = useTransform(scrollYProgress, [0.25, 1], [24, 0]);
+  const radius = useTransform(scrollYProgress, [0.25, 1], [16, 0]);
   const clip = useTransform([inset, radius], ([i, r]) => `inset(0 ${i}% round ${r}px)`);
-  const c = CASES[0];
   return (
     <section id="top">
       <div className="mx-auto max-w-[1400px] px-5 pb-16 pt-14 sm:px-8 sm:pt-20">
         <Reveal>
           <h1 className="max-w-[1250px] text-[34px] leading-[1.12] tracking-[-0.02em] sm:text-[56px]">
-            <span className="font-bold">Full stack & AI engineer building software that ships.</span>{" "}
+            <span className="font-semibold">Full stack & AI engineer building software that ships.</span>{" "}
             <span className="font-serif">Production SaaS, LLM agents and 40+ websites for real clients. Relocating to Dublin in January 2027.</span>
           </h1>
         </Reveal>
-        <Reveal delay={0.1} className="mt-10 flex flex-wrap gap-3">
-          <a href="#work" className="rounded-xl bg-ink px-6 py-3 text-[15px] font-medium text-bg transition-opacity hover:opacity-85">See my work</a>
-          <a href={`mailto:${LINKS.email}`} className="rounded-xl border border-line px-6 py-3 text-[15px] font-medium transition-colors hover:bg-card">Get in touch</a>
-        </Reveal>
       </div>
-      <motion.div ref={ref} style={{ clipPath: clip }} className="relative h-[85vh] min-h-[520px] overflow-hidden bg-[#8a8070]">
-        <video src={c.video} poster={c.desktop} autoPlay muted loop playsInline className="absolute inset-0 h-full w-full object-cover opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/60" />
+      <motion.div ref={ref} style={{ clipPath: clip }} className="relative h-[85vh] min-h-[520px] overflow-hidden bg-[#8b8173]">
+        <Art seed={7} className="absolute inset-0 opacity-25 mix-blend-multiply" />
         <div className="relative flex h-full flex-col items-center justify-center px-6 text-center text-white">
-          <p className="font-serif text-[44px] leading-[1.02] tracking-[-0.02em] sm:text-[96px]">{c.name}</p>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-white/85 sm:text-[22px]">{c.kind}, live in production. Built and run with my business partner.</p>
-          <div className="mt-8 flex gap-3">
-            <a href={`#project/${c.id}`} className="rounded-xl bg-white px-6 py-3 text-[15px] font-medium text-ink">Read the case</a>
-            <a href="#work" className="rounded-xl bg-black/50 px-6 py-3 text-[15px] font-medium text-white backdrop-blur">All projects</a>
+          <p className="font-serif text-[48px] leading-[1.02] tracking-[-0.02em] sm:text-[104px]">From idea<br className="sm:hidden" /> to production</p>
+          <p className="mt-7 max-w-xl text-[17px] leading-relaxed text-white/90 sm:text-[22px]">Architecture, databases, APIs, AI agents and the server they run on. Python, TypeScript and Go.</p>
+          <div className="mt-9 flex gap-3">
+            <a href="#work" className="rounded-xl bg-white px-6 py-3 text-[15px] font-medium text-ink">See my work</a>
+            <a href={`mailto:${LINKS.email}`} className="rounded-xl bg-ink px-6 py-3 text-[15px] font-medium text-white">Get in touch</a>
           </div>
         </div>
       </motion.div>
@@ -149,26 +216,20 @@ function Section({ id, eyebrow, title, sub, children, className = "" }) {
 /* ---------- projetos ---------- */
 
 function Work({ onOpen }) {
+  const tint = ["#e3dacc", "#d5e0d1", "#dfe6ee", "#efe3d3", "#e6e0ea", "#dcdcd4"];
   return (
-    <Section id="work" eyebrow="Selected work" title="Products I built, run or sold." sub="Real clients, real users. Click any project for the architecture and the decisions behind it.">
-      <div className="space-y-6">
+    <Section id="work" eyebrow="Selected work" title="Products I built, run or sold." sub="Real clients, real users. Open any project for the architecture and the decisions behind it.">
+      <div className="group/list grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
         {CASES.map((c, i) => (
-          <Reveal key={c.id}>
-            <button onClick={() => onOpen(c.id)} className="group grid w-full items-center gap-8 rounded-[28px] bg-card p-5 text-left transition-colors hover:bg-card2 sm:p-8 md:grid-cols-[1fr_1.25fr] md:gap-12">
-              <div className={i % 2 ? "md:order-2" : ""}>
-                <p className="text-[13px] text-mute">{c.kind} · {c.year}</p>
-                <h3 className="mt-2 font-serif text-[30px] leading-tight tracking-tight sm:text-[38px]">{c.name}</h3>
-                <p className="mt-4 text-[16px] leading-relaxed text-mute">{c.lede}</p>
-                <div className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
-                  {c.metrics?.slice(0, 2).map(([n, l]) => (
-                    <div key={l}><div className="font-serif text-2xl">{n}</div><div className="mt-0.5 max-w-[16ch] text-[13px] leading-snug text-mute">{l}</div></div>
-                  ))}
-                </div>
-                <span className="mt-7 inline-flex items-center gap-1.5 text-[14px] font-medium">Read the case <Arrow className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></span>
+          <Reveal key={c.id} delay={(i % 3) * 0.06}>
+            <button onClick={() => onOpen(c.id)} className="group block w-full text-left transition-opacity duration-300 group-hover/list:opacity-45 hover:!opacity-100">
+              <p className="flex items-center gap-3 text-[14px] text-mute"><span className="rounded-full bg-card px-2.5 py-0.5 tracking-widest">···</span>{c.kind}</p>
+              <div className="relative mt-4 aspect-[4/5] overflow-hidden" style={{ background: tint[i % tint.length] }}>
+                <Art seed={i + 2} className="absolute inset-0 opacity-30" />
+                <img src={c.desktop} alt={c.name} loading="lazy" className="absolute bottom-0 left-[10%] h-[78%] w-[120%] max-w-none rounded-tl-xl object-cover object-left-top shadow-2xl transition-transform duration-700 group-hover:-translate-y-2" />
               </div>
-              <div className="overflow-hidden rounded-2xl border border-line bg-bg">
-                <img src={c.desktop} alt={c.name} loading="lazy" className="aspect-[16/10] w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]" />
-              </div>
+              <h3 className="mt-5 text-[26px] font-semibold leading-tight tracking-[-0.01em]">{c.name}</h3>
+              <p className="mt-2 line-clamp-3 text-[16px] leading-relaxed text-mute">{c.lede}</p>
             </button>
           </Reveal>
         ))}
@@ -431,6 +492,14 @@ function FootRow({ title, items }) {
   );
 }
 
+function FootMark() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 35%", "start 0%"] });
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -20]);
+  return <motion.p ref={ref} style={{ opacity, y }} className="self-start text-[34px] sm:text-[44px]"><Wordmark /></motion.p>;
+}
+
 function Footer() {
   const rows = [
     ["Work", CASES.map((c) => [c.name, `#project/${c.id}`])],
@@ -443,7 +512,7 @@ function Footer() {
   return (
     <footer id="footer" className="bg-[#141413] text-[#faf9f5]">
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 pb-12 pt-24 sm:px-8 lg:grid-cols-[1fr_1.9fr]">
-        <p className="text-[34px] font-bold tracking-[0.12em] sm:text-[44px]">KEVIN MATOS</p>
+        <FootMark />
         <div className="border-b border-white/15">
           {rows.map(([t, items]) => <FootRow key={t} title={t} items={items} />)}
         </div>
