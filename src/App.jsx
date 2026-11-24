@@ -54,26 +54,23 @@ function Wordmark({ compact = false, className = "" }) {
     addEventListener("resize", measure);
     return () => { clearTimeout(t); removeEventListener("resize", measure); };
   }, []);
-  /* Recolhendo: o K anda até o centro empurrando "EVIN MA", que some no caminho;
-     o "OS" some logo, e só então a \ desliza e encaixa no K. Abrindo: o contrário. */
-  const ez = "ease-[cubic-bezier(.65,0,.35,1)]";
-  const kMove = `inline-block transition-transform duration-[350ms] ${ez} ${compact ? "" : "delay-100"}`;
-  const slMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "delay-[300ms]" : ""}`;
-  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-[800ms] ${ez} ${compact ? "opacity-0" : "opacity-100"}`;
-  const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-200 delay-300"}`;
+  /* Recolhendo em três tempos: o K empurra a palavra inteira para a direita,
+     as letras somem, e então o K e a \ deslizam juntos e encaixam no centro.
+     Abrindo: K e \ voltam juntos e as letras reaparecem. */
+  const P = 18; /* quanto o empurrão desloca a palavra */
+  const T = { duration: 1.1, times: [0, 0.3, 0.5, 1], ease: ["easeOut", "linear", [0.45, 0, 0.2, 1]] };
+  const back = { duration: 0.6, ease: [0.45, 0, 0.2, 1] };
+  const pos = (end) => (compact ? [0, P, P, end] : 0);
+  const word = compact
+    ? { x: [0, P, P, P], opacity: [1, 1, 0, 0] }
+    : { x: 0, opacity: 1 };
+  const wordT = compact ? T : { x: { duration: 0 }, opacity: { duration: 0.3, delay: 0.5 } };
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
-      <motion.span ref={k} className="inline-block" initial={false} animate={{ x: compact ? dx[0] : 0 }} transition={{ duration: 0.8, ease: [0.45, 0, 0.2, 1] }}>K</motion.span>
-      <span className={pushed} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>EVIN MA</span>
-      {/* A \ é empurrada junto com o K e depois volta para encaixar nele. */}
-      <motion.span
-        ref={sl}
-        className="inline-block"
-        initial={false}
-        animate={{ x: compact ? dx[1] : 0 }}
-        transition={{ duration: 0.8, ease: [0.45, 0, 0.2, 1] }}
-      >{"\\"}</motion.span>
-      <span className={fade}>OS</span>
+      <motion.span ref={k} className="inline-block" initial={false} animate={{ x: pos(dx[0]) }} transition={compact ? T : back}>K</motion.span>
+      <motion.span className="inline-block whitespace-pre" initial={false} animate={word} transition={wordT}>EVIN MA</motion.span>
+      <motion.span ref={sl} className="inline-block" initial={false} animate={{ x: pos(dx[1]) }} transition={compact ? T : back}>{"\\"}</motion.span>
+      <motion.span className="inline-block whitespace-pre" initial={false} animate={word} transition={wordT}>OS</motion.span>
     </span>
   );
 }
