@@ -128,7 +128,7 @@ function FullMenu({ onClose }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-0 z-[70] bg-[#141413] text-[#faf9f5]">
       <div className={`${W} grid h-full lg:grid-cols-2 lg:gap-16`}>
-        <div onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] lg:block">
+        <div onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
           {feed.map(([lap, c], i) => {
             const wide = i % 3 === 2;
             return (
@@ -140,7 +140,7 @@ function FullMenu({ onClose }) {
             );
           })}
         </div>
-        <div className="flex flex-col overflow-y-auto overscroll-contain pb-10">
+        <div className="flex flex-col overflow-y-auto overscroll-contain pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between bg-[#141413] lg:justify-end">
             <Wordmark className="text-[17px] lg:hidden" />
             <button onClick={onClose} className="grid size-9 place-items-center rounded-lg border border-white/20 hover:border-white/50" aria-label="Close menu">
