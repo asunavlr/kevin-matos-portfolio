@@ -314,7 +314,7 @@ function Header() {
               </>
             ) : (
               <>
-                <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
+                <motion.a initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.15 }} href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</motion.a>
                 <motion.button layoutId="searchbox" transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Search">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
                 </motion.button>
