@@ -378,7 +378,7 @@ function Clients() {
         })}
       </div>
       {SITES.length > 6 && (
-        <button onClick={() => setAll(!all)} className="mt-10 rounded-full border border-line px-4 py-1.5 text-[13.5px] hover:border-ink/25">{all ? "Show less" : `Show all ${SITES.length} sites`}</button>
+        <div className="mt-10 flex justify-center"><button onClick={() => setAll(!all)} className="rounded-full border border-line px-4 py-1.5 text-[13.5px] hover:border-ink/25">{all ? "Show less" : `Show all ${SITES.length} sites`}</button></div>
       )}
     </Section>
   );
@@ -387,13 +387,19 @@ function Clients() {
 function Feedback() {
   return (
     <Section id="feedback" eyebrow="Client feedback" title="What clients said.">
-      <div className="grid gap-8 md:grid-cols-3">
-        {TESTIMONIALS.map(([q, name, role]) => (
-          <Reveal key={q} className="border-t border-line pt-5">
-            <p className="font-serif text-[20px] leading-snug">“{q}”</p>
-            <p className="mt-3 text-[13px] text-mute">{name} · {role}</p>
-          </Reveal>
-        ))}
+      <div className="grid gap-x-5 gap-y-10 md:grid-cols-3">
+        {TESTIMONIALS.map(([q, name, role, project]) => {
+          const site = SITES.find((x) => x.name === project);
+          return (
+            <Reveal key={q}>
+              <a href={site?.url} target="_blank" rel="noreferrer" className="group block">
+                {site && <img src={site.shot} alt={project} loading="lazy" className="aspect-[4/3] w-full object-cover object-top transition-opacity group-hover:opacity-80" />}
+                <p className="mt-5 font-serif text-[22px] leading-snug">“{q}”</p>
+                <p className="mt-3 text-[13px] text-mute">{name} · {role}</p>
+              </a>
+            </Reveal>
+          );
+        })}
       </div>
     </Section>
   );
@@ -404,36 +410,55 @@ function Feedback() {
 function Code() {
   return (
     <Section id="code" eyebrow="Open source" title="The engineering, in public." sub="Small, focused repos with tests, each one proving a specific skill.">
-      <div className="divide-y divide-line border-y border-line">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {REPOS.map((r) => (
-          <a key={r.name} href={`${LINKS.github}/${r.name}`} target="_blank" rel="noreferrer" className="group grid gap-2 py-5 md:grid-cols-[200px_1fr_auto] md:items-baseline md:gap-8">
-            <div className="flex items-center gap-2"><span className="size-2 rounded-full" style={{ background: r.color }} /><span className="font-mono text-[13.5px]">{r.name}</span></div>
-            <div><p className="text-[14.5px] leading-relaxed text-mute">{r.desc}</p><p className="mt-1 text-[12.5px] text-mute/80">{r.lang} · {r.proof.join(" · ")}</p></div>
-            <Arrow className="hidden text-mute group-hover:text-ink md:block" />
-          </a>
+          <Reveal key={r.name}>
+            <a href={`${LINKS.github}/${r.name}`} target="_blank" rel="noreferrer" className="group flex h-full flex-col bg-card p-5 transition-colors hover:bg-card2">
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-2 font-mono text-[13.5px]"><span className="size-2 rounded-full" style={{ background: r.color }} />{r.name}</span>
+                <span className="text-[12px] text-mute">{r.lang}</span>
+              </div>
+              <p className="mt-3 text-[14px] leading-relaxed text-mute">{r.desc}</p>
+              <pre className="mt-4 max-h-[150px] overflow-hidden bg-[#141413] p-4 font-mono text-[11.5px] leading-relaxed text-[#e8e6dc] [mask-image:linear-gradient(to_bottom,black_70%,transparent)]">{r.code}</pre>
+              <div className="mt-auto flex flex-wrap gap-1.5 pt-4">{r.proof.map((x) => <span key={x} className="rounded-full border border-line px-2.5 py-0.5 text-[12px] text-mute">{x}</span>)}</div>
+            </a>
+          </Reveal>
         ))}
       </div>
     </Section>
   );
 }
 
+/* Print de cada trabalho, quando tem. */
+const JOB_SHOT = { "Goiás Direto": "card-goias", "Avodah Optical": "card-avodah", "Comply (comply.website)": "card-comply", Pujante: "card-agro", "Agrios / MeuAT": "card-farm" };
+
 function Experience() {
   return (
     <Section id="experience" eyebrow="Experience" title="Where I've worked.">
-      <div className="divide-y divide-line border-y border-line">
+      <ol className="relative">
+        <span className="absolute bottom-2 left-[5px] top-2 w-px bg-line md:left-[calc(200px+5px)]" />
         {JOBS.map((j) => (
-          <div key={j.co} className="grid gap-3 py-7 md:grid-cols-[240px_1fr] md:gap-8">
-            <div><p className="text-[13px] text-mute">{j.when}</p><h3 className="mt-0.5 text-[16px] font-semibold">{j.co}</h3></div>
-            <div>
-              <p className="text-[15px] font-medium">{j.role}</p>
-              <ul className="mt-2 space-y-1.5">
-                {j.pts.map((p) => <li key={p} className="relative pl-4 text-[14.5px] leading-relaxed text-mute before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-mute/60">{p}</li>)}
-              </ul>
-            </div>
-          </div>
+          <Reveal key={j.co}>
+            <li className="relative grid gap-2 pb-14 pl-8 md:grid-cols-[200px_1fr] md:gap-0 md:pl-0">
+              <p className="pt-0.5 text-[13px] text-mute md:pr-8 md:text-right">{j.when}</p>
+              <span className="absolute left-0 top-[7px] size-[11px] rounded-full border-2 border-bg bg-ink md:left-[200px]" />
+              <div className="md:pl-10">
+                <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
+                  <div>
+                    <h3 className="text-[17px] font-semibold">{j.co}</h3>
+                    <p className="text-[14px] text-mute">{j.role}{j.via ? ` · ${j.via}` : ""}</p>
+                    <ul className="mt-3 space-y-1.5">
+                      {j.pts.map((p) => <li key={p} className="text-[14.5px] leading-relaxed text-mute">{p}</li>)}
+                    </ul>
+                  </div>
+                  {JOB_SHOT[j.co] && <img src={`/kevin/shots/${JOB_SHOT[j.co]}.jpg`} alt="" loading="lazy" className="hidden aspect-[4/3] w-full object-cover object-left-top lg:block" />}
+                </div>
+              </div>
+            </li>
+          </Reveal>
         ))}
-      </div>
-      <a href={LINKS.cv} target="_blank" rel="noreferrer" className="mt-8 inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-1.5 text-[13.5px] hover:border-ink/25">Download the full CV <Arrow /></a>
+      </ol>
+      <a href={LINKS.cv} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-1.5 text-[13.5px] hover:border-ink/25 md:ml-[240px]">Download the full CV <Arrow /></a>
     </Section>
   );
 }
@@ -534,7 +559,7 @@ function FootRow({ title, items }) {
   const [on, setOn] = useState(false);
   return (
     <div className="border-t border-white/15">
-      <button onClick={() => setOn(!on)} className={`flex w-full items-center justify-between py-4 text-left text-[15px] transition-colors ${on ? "text-white" : "text-white/55 hover:text-white"}`}>{title}<Chev up={on} className="size-3" /></button>
+      <button onClick={() => setOn(!on)} className={`flex w-full items-center justify-between py-5 text-left text-[16px] transition-colors ${on ? "text-white" : "text-white/55 hover:text-white"}`}>{title}<Chev up={on} className="size-3" /></button>
       <AnimatePresence initial={false}>
         {on && (
           <motion.ul initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease }} className="grid overflow-hidden pb-3 sm:grid-cols-2">
@@ -563,12 +588,12 @@ function Footer() {
     ["Notes", NOTES.map((n) => [n.title, "#notes"])],
   ];
   return (
-    <footer id="footer" className="bg-[#141413] text-[#faf9f5]">
-      <div className={`${W} grid gap-10 pb-10 pt-20 lg:grid-cols-[1fr_1.7fr]`}>
+    <footer id="footer" className="flex min-h-[100svh] flex-col justify-between bg-[#141413] pt-16 text-[#faf9f5]">
+      <div className={`${W} grid w-full gap-10 pb-10 pt-10 lg:grid-cols-[1fr_1.7fr]`}>
         <FootMark />
         <div className="border-b border-white/15">{rows.map(([t, items]) => <FootRow key={t} title={t} items={items} />)}</div>
       </div>
-      <div className={`${W} grid gap-8 pb-14 pt-6 text-[14px] lg:grid-cols-[1fr_1fr_0.8fr]`}>
+      <div className={`${W} grid w-full gap-8 pb-14 pt-6 text-[14px] lg:grid-cols-[1fr_1fr_0.8fr]`}>
         <div className="flex flex-col justify-end gap-4 text-white/55">
           <span>© 2026 Kevin Matos</span>
           <div className="flex gap-5">
