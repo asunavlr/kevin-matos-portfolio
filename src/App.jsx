@@ -54,10 +54,10 @@ function Wordmark({ compact = false, className = "" }) {
   /* Recolhendo: o K anda até o centro empurrando "EVIN MA", que some no caminho;
      o "OS" some logo, e só então a \ desliza e encaixa no K. Abrindo: o contrário. */
   const ez = "ease-[cubic-bezier(.65,0,.35,1)]";
-  const kMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "" : "delay-[150ms]"}`;
+  const kMove = `inline-block transition-transform duration-[350ms] ${ez} ${compact ? "" : "delay-100"}`;
   const slMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "delay-[300ms]" : ""}`;
-  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-500 ${ez} ${compact ? "opacity-0" : "opacity-100 delay-[150ms]"}`;
-  const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-300 delay-[450ms]"}`;
+  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-[350ms] ${ez} ${compact ? "opacity-0" : "opacity-100 delay-100"}`;
+  const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-200 delay-300"}`;
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
       <span ref={k} className={kMove} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>K</span>
@@ -68,7 +68,7 @@ function Wordmark({ compact = false, className = "" }) {
         className="inline-block"
         initial={false}
         animate={{ x: compact ? [0, dx[0], dx[1]] : 0 }}
-        transition={compact ? { duration: 0.8, times: [0, 0.55, 1], ease: [0.65, 0, 0.35, 1] } : { duration: 0.5, ease: [0.65, 0, 0.35, 1] }}
+        transition={compact ? { duration: 0.55, times: [0, 0.55, 1], ease: [0.65, 0, 0.35, 1] } : { duration: 0.35, ease: [0.65, 0, 0.35, 1] }}
       >{"\\"}</motion.span>
       <span className={fade}>OS</span>
     </span>
