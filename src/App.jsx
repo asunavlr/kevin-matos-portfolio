@@ -720,36 +720,59 @@ function Experience() {
   );
 }
 
+/* Idiomas em cima (o C2 mostra o certificado no hover), quatro destaques e o resto em lista. */
+const FEATURED = ["AI Agents Course", "Claude with the Anthropic API", "Introduction to Model Context Protocol", "Intermediate Machine Learning"];
+
 function Certs() {
   const [open, setOpen] = useState(null);
   useLock(!!open);
+  const list = CERTS.filter((c) => !/EF SET/.test(c.name));
+  const feat = FEATURED.map((n) => list.find((c) => c.name === n)).filter(Boolean);
+  const rest = list.filter((c) => !feat.includes(c));
+  const ef = CERTS.find((c) => /EF SET/.test(c.name));
   return (
     <Section id="certs" eyebrow="Certifications & languages" title="Always learning, with proof." sub="Every certificate links to its public verification page.">
-      <div className="mb-10 grid gap-4 sm:grid-cols-2">
-        {[["English", "C2 Proficient", "EF SET 80/100 · Reading 76, Listening 84", "https://cert.efset.org/en/tiiCCp"], ["Portuguese", "Native", "Brazilian", null]].map(([l, lvl, note, href]) => (
-          <div key={l} className="bg-card p-5">
-            <p className="text-[13px] text-mute">{l}</p>
-            <p className="mt-1 font-serif text-[26px] leading-tight">{lvl}</p>
-            <p className="mt-1 text-[13.5px] text-mute">{note}</p>
-            {href && <a href={href} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[13.5px] font-medium">Verify <Arrow /></a>}
-          </div>
-        ))}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <a href="https://cert.efset.org/en/tiiCCp" target="_blank" rel="noreferrer" className="group relative bg-card p-5">
+          <p className="text-[13px] text-mute">English</p>
+          <p className="mt-1 font-serif text-[28px] leading-tight underline-offset-4 group-hover:underline">C2 Proficient</p>
+          <p className="mt-1 text-[13.5px] text-mute">EF SET 80/100 · Reading 76, Listening 84</p>
+          <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium">Verify <Arrow /></span>
+          {ef && (
+            <img src={ef.img} alt="EF SET certificate" className="pointer-events-none absolute right-5 top-1/2 z-20 hidden w-[230px] -translate-y-1/2 translate-x-2 rotate-2 opacity-0 shadow-[0_24px_60px_rgba(0,0,0,.22)] transition-all duration-300 group-hover:translate-x-0 group-hover:rotate-0 group-hover:opacity-100 sm:block" />
+          )}
+        </a>
+        <div className="bg-card p-5">
+          <p className="text-[13px] text-mute">Portuguese</p>
+          <p className="mt-1 font-serif text-[28px] leading-tight">Native</p>
+          <p className="mt-1 text-[13.5px] text-mute">Brazilian</p>
+        </div>
       </div>
-      <div className="divide-y divide-line border-y border-line">
-        {CERTS.map((c) => (
-          <div key={c.name} className="grid items-baseline gap-1 py-4 sm:grid-cols-[160px_1fr_auto] sm:gap-8">
+
+      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {feat.map((c) => (
+          <a key={c.name} href={c.verify || c.url} target="_blank" rel="noreferrer" className="group block">
             <p className="text-[13px] text-mute">{c.org}</p>
-            <div>
-              <button onClick={() => setOpen(c)} className="text-left text-[15px] font-medium hover:underline hover:underline-offset-4">{c.name}</button>
-              <p className="mt-0.5 text-[13.5px] leading-relaxed text-mute">{c.note}</p>
+            <div className="mt-2.5 grid aspect-[4/3] place-items-center overflow-hidden bg-card p-5">
+              <img src={c.img} alt={c.name} loading="lazy" className="max-h-full max-w-full shadow-[0_10px_30px_rgba(0,0,0,.12)] transition-transform duration-500 group-hover:scale-[1.03]" />
             </div>
-            <div className="flex gap-4 text-[13px]">
-              <span className="text-mute">{c.date}</span>
-              {c.verify && <a href={c.verify} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium">Verify <Arrow /></a>}
-            </div>
+            <p className="mt-3.5 text-[16px] font-semibold leading-snug">{c.name}</p>
+            <p className="mt-1.5 line-clamp-2 text-[13.5px] leading-relaxed text-mute">{c.note}</p>
+            <p className="mt-2 inline-flex items-center gap-1 text-[13px] font-medium">{c.date} · Verify <Arrow /></p>
+          </a>
+        ))}
+      </div>
+
+      <p className="mt-14 text-[13.5px] text-mute">Also certified</p>
+      <div className="mt-4 grid border-t border-line sm:grid-cols-2 sm:gap-x-10">
+        {rest.map((c) => (
+          <div key={c.name} className="flex items-baseline justify-between gap-4 border-b border-line py-3.5 text-[15px]">
+            <button onClick={() => setOpen(c)} className="text-left hover:underline hover:underline-offset-4">{c.name} <span className="text-mute">· {c.org}</span></button>
+            {c.verify && <a href={c.verify} target="_blank" rel="noreferrer" className="shrink-0 text-mute hover:text-ink" aria-label="Verify"><Arrow /></a>}
           </div>
         ))}
       </div>
+
       <AnimatePresence>
         {open && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(null)} className="fixed inset-0 z-[75] grid place-items-center bg-ink/40 p-4 backdrop-blur-sm">
