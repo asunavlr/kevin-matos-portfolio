@@ -430,7 +430,7 @@ function Feedback() {
     return () => clearTimeout(t);
   }, [i]);
   /* Tudo empilhado na mesma célula do grid: troca por crossfade, sem a altura pular. */
-  const layer = (on) => `[grid-area:1/1] transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(.22,1,.36,1)] ${on ? "opacity-100 translate-y-0 blur-0" : "pointer-events-none opacity-0 translate-y-2 blur-[2px]"}`;
+  const layer = (on) => `[grid-area:1/1] transition-opacity duration-[900ms] ease-in-out ${on ? "opacity-100 delay-300" : "pointer-events-none opacity-0"}`;
   return (
     <Section id="feedback" eyebrow="Client feedback" title="What clients said.">
       <div className="grid items-center gap-10 bg-card p-8 sm:p-14 lg:grid-cols-[1fr_360px]">
