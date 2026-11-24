@@ -122,7 +122,7 @@ function Search({ q, onClose }) {
   const term = q.trim().toLowerCase();
   const hits = term ? all.filter((h) => `${h[1]} ${h[3]} ${h[0]}`.toLowerCase().includes(term)).slice(0, 10) : [];
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} id="search-scroll" className="fixed inset-x-0 bottom-0 top-[84px] z-40 overflow-y-auto bg-bg">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} id="search-scroll" className="fixed inset-0 z-40 overflow-y-auto bg-bg pt-[84px]">
       <div className={`${W} grid min-h-[calc(100svh-84px)] items-center gap-10 py-10 lg:grid-cols-[1fr_340px]`}>
         <div className="relative mx-auto hidden aspect-square w-full max-w-[440px] lg:block">
           <img src="/kevin/shots/mosaic.png" alt="" className="absolute inset-0 h-full w-full animate-[spin_240s_linear_infinite,reveal_1.1s_ease-out_both]" />
