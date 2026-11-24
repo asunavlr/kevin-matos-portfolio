@@ -1412,6 +1412,7 @@ function Experience() {
                 <p className="mt-1 text-sm text-soft">{c.note}</p>
                 <div className="mt-2 flex gap-4 text-sm">
                   <a href={c.url} target="_blank" rel="noreferrer" className="text-[#d9bf8a] hover:underline">View certificate</a>
+                  {c.verify && <a href={c.verify} target="_blank" rel="noreferrer" className="text-soft hover:text-ink hover:underline">Verify</a>}
                   {c.repo && <a href={c.repo} target="_blank" rel="noreferrer" className="text-soft hover:text-ink hover:underline">Project code</a>}
                 </div>
               </div>
