@@ -495,13 +495,15 @@ function CaseModal({ id, onClose }) {
             </button>
           </div>
           <article className={`${W} pb-24`}>
-            <header className="max-w-4xl pt-6 sm:pt-12">
+            <div className="grid items-center gap-10 pt-6 sm:pt-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+            <header>
               <p className="text-[13px] text-mute">{c.kind} · {c.year} · {c.badge}</p>
-              <h1 className="mt-3 font-serif text-[42px] leading-[1.05] tracking-[-0.02em] sm:text-[64px]">{c.name}</h1>
+              <h1 className="mt-3 font-serif text-[42px] leading-[1.05] tracking-[-0.02em] sm:text-[60px]">{c.name}</h1>
               <p className="mt-5 text-[17px] leading-relaxed text-mute sm:text-[20px]">{c.lede}</p>
               {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-[14px] font-medium text-bg">Visit live <Arrow /></a>}
             </header>
-            <img src={`/kevin/shots/card-${c.id}.jpg`} alt={c.name} className="mt-10 aspect-[16/9] w-full max-w-4xl bg-card object-cover object-top sm:mt-14" />
+            <img src={`/kevin/shots/card-${c.id}.jpg`} alt={c.name} className="aspect-[4/3] w-full bg-card object-cover object-left-top" style={{ objectPosition: POS[c.id] }} />
+            </div>
             {c.metrics && (
               <div className="mt-10 grid grid-cols-2 gap-6 border-b border-line pb-10 sm:grid-cols-3">
                 {c.metrics.map(([n, l]) => <div key={l}><div className="font-serif text-[30px] leading-none sm:text-[38px]">{n}</div><p className="mt-2 text-[13px] leading-snug text-mute">{l}</p></div>)}
