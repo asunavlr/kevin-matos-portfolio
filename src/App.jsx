@@ -418,7 +418,7 @@ function Section({ id, eyebrow, title, sub, children }) {
 }
 
 /* Carrossel do celular: arrasta para o lado, com setas e contador "03 / 08". */
-function Carousel({ items, render, dark = false }) {
+function Carousel({ items, render, dark = false, item = "w-[82%]" }) {
   const ref = useRef(null);
   const [n, setN] = useState(0);
   const go = (d) => {
@@ -434,8 +434,8 @@ function Carousel({ items, render, dark = false }) {
   const btn = `grid size-8 place-items-center rounded-[10px] border ${dark ? "border-white/20" : "border-line bg-card"}`;
   return (
     <div>
-      <div ref={ref} onScroll={on} className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {items.map((it, i) => <div key={i} className="w-[82%] shrink-0 snap-start">{render(it, i)}</div>)}
+      <div ref={ref} onScroll={on} className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 sm:mx-0 sm:scroll-px-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {items.map((it, i) => <div key={i} className={`${item} shrink-0 snap-start`}>{render(it, i)}</div>)}
       </div>
       <div className="mt-8 flex items-center justify-between">
         <button onClick={() => go(-1)} className={btn} aria-label="Previous">←</button>
@@ -467,21 +467,7 @@ function WorkCard({ c, onOpen }) {
 function Work({ onOpen }) {
   return (
     <Section id="work" eyebrow="Selected work" title="Products I built, run or sold." sub="Real clients, real users. Open any project for the architecture and the decisions behind it.">
-      <div className="sm:hidden">
-        <Carousel items={[...CASES, STUDIO]} render={(c) => <WorkCard c={c} onOpen={onOpen} />} />
-      </div>
-      <div className="hidden gap-x-5 gap-y-10 sm:grid sm:grid-cols-2 lg:grid-cols-4">
-        {[...CASES, STUDIO].map((c, i) => (
-          <Reveal key={c.id} delay={(i % 4) * 0.05}>
-            <button onClick={() => (c.id === "comply" ? open(c.url, "_blank") : onOpen(c.id))} className="block w-full text-left transition-opacity duration-300 hover:opacity-55">
-              <p className="flex items-center gap-2.5 text-[13px] text-mute"><span className="rounded-full bg-card px-2 leading-5 tracking-widest">···</span>{c.kind}</p>
-              <img src={`/kevin/shots/card-${c.id}.jpg`} alt={c.name} loading="lazy" className="mt-3 aspect-[4/5] w-full object-cover" style={{ objectPosition: POS[c.id] ?? "left top" }} />
-              <h3 className="mt-4 text-[18px] font-semibold leading-snug">{c.name}</h3>
-              <p className="mt-1.5 line-clamp-3 text-[14px] leading-relaxed text-mute">{c.lede}</p>
-            </button>
-          </Reveal>
-        ))}
-      </div>
+      <Carousel items={[...CASES, STUDIO]} item="w-[82%] sm:w-[calc((100%-16px)/2)] lg:w-[calc((100%-48px)/4)]" render={(c) => <WorkCard c={c} onOpen={onOpen} />} />
     </Section>
   );
 }
@@ -515,9 +501,7 @@ function CaseModal({ id, onClose }) {
               <p className="mt-5 text-[17px] leading-relaxed text-mute sm:text-[20px]">{c.lede}</p>
               {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-[14px] font-medium text-bg">Visit live <Arrow /></a>}
             </header>
-            <div className="mt-10 overflow-hidden bg-card sm:mt-14">
-              {c.video ? <video src={c.video} poster={c.desktop} autoPlay muted loop playsInline className="w-full" /> : <img src={c.desktop} alt={c.name} className="w-full" />}
-            </div>
+            <img src={`/kevin/shots/card-${c.id}.jpg`} alt={c.name} className="mt-10 aspect-[16/9] w-full max-w-4xl bg-card object-cover object-top sm:mt-14" />
             {c.metrics && (
               <div className="mt-10 grid grid-cols-2 gap-6 border-b border-line pb-10 sm:grid-cols-3">
                 {c.metrics.map(([n, l]) => <div key={l}><div className="font-serif text-[30px] leading-none sm:text-[38px]">{n}</div><p className="mt-2 text-[13px] leading-snug text-mute">{l}</p></div>)}
@@ -530,8 +514,8 @@ function CaseModal({ id, onClose }) {
               </dl>
             </div>
             {c.gallery && (
-              <div className="mt-14 grid gap-4 sm:grid-cols-2">
-                {c.gallery.map((g) => <img key={g} src={g} alt="" loading="lazy" className="w-full bg-card" />)}
+              <div className="mt-14">
+                <Carousel items={c.gallery} item="w-[82%] sm:w-[calc((100%-32px)/3)]" render={(g) => <img src={g} alt="" loading="lazy" className="aspect-[16/10] w-full bg-card object-cover object-top" />} />
               </div>
             )}
             <div className="mt-14 grid gap-10 lg:grid-cols-[240px_1fr]">
