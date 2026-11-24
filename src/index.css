@@ -15,6 +15,6 @@
 
 html { scroll-behavior: smooth; scroll-padding-top: 88px; background: var(--color-bg); overflow-x: clip; }
 body { background: var(--color-bg); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: clip; overflow-anchor: none; }
-::selection { background: var(--color-clay); color: #fff; }
+::selection { background: #d5d2c8; color: inherit; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 .font-serif { font-weight: 450; letter-spacing: -0.015em; font-optical-sizing: auto; }

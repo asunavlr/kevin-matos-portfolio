@@ -202,13 +202,13 @@ function Hero() {
     <section id="top">
       <div className={`${W} pb-14 pt-12 sm:pt-16`}>
         <Reveal>
-          <h1 className="max-w-[1100px] text-[26px] leading-[1.22] tracking-[-0.015em] sm:text-[34px]">
+          <h1 className="w-fit max-w-[1100px] text-[26px] leading-[1.22] tracking-[-0.015em] sm:text-[34px]">
             <span className="font-semibold">Full stack & AI engineer building software that ships.</span>{" "}
             <span className="font-serif text-[1.06em]">Production SaaS, LLM agents and 40+ websites for real clients, end to end: architecture, databases, APIs and deployment. Relocating to Dublin in January 2027.</span>
           </h1>
         </Reveal>
       </div>
-      <motion.div ref={ref} style={{ clipPath: clip }} className="relative h-[78vh] min-h-[460px] overflow-hidden bg-[#6b7280]">
+      <motion.div ref={ref} style={{ clipPath: clip }} className="relative h-[78vh] min-h-[460px] select-none overflow-hidden bg-[#6b7280]">
         <img src="/kevin/shots/dublin.jpg" alt="The River Liffey and the Ha'penny Bridge, Dublin" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/25 to-black/55" />
         <div className="relative flex h-full flex-col items-center justify-center px-6 text-center text-white">
