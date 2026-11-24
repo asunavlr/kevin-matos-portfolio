@@ -198,6 +198,7 @@ function FullMenu({ onClose }) {
 function Header() {
   const [compact, setCompact] = useState(false);
   const [dark, setDark] = useState(false);
+  const [cut, setCut] = useState(84);
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState(null);
   const [search, setSearch] = useState(false);
@@ -205,7 +206,11 @@ function Header() {
     const on = () => {
       setCompact(scrollY > 40);
       const f = document.getElementById("footer");
-      setDark(!!f && f.getBoundingClientRect().top < 64);
+      /* O footer sobe por baixo do header: o fundo claro encolhe até onde o footer começa,
+         e o texto inverte quando o footer passa do meio dos botões. */
+      const top = f ? f.getBoundingClientRect().top : 9999;
+      setCut(Math.max(0, Math.min(84, top)));
+      setDark(top < 42);
     };
     on();
     addEventListener("scroll", on, { passive: true });
@@ -215,7 +220,8 @@ function Header() {
   const pill = (on) => `flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[13px] transition-colors duration-200 ${on ? (dark ? "border-white bg-white text-ink" : "border-ink bg-ink text-bg") : dark ? line : "border-line bg-card hover:bg-card2"}`;
   return (
     <>
-      <header onMouseLeave={() => setMenu(null)} className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${dark ? "bg-[#141413] text-[#faf9f5]" : "bg-bg text-ink"}`}>
+      <header onMouseLeave={() => setMenu(null)} className={`fixed inset-x-0 top-0 z-50 transition-colors duration-200 ${dark ? "text-[#faf9f5]" : "text-ink"}`}>
+        <span className="absolute inset-x-0 top-0 -z-10 bg-bg" style={{ height: cut }} />
         <div className={`${W} grid h-[84px] grid-cols-[1fr_auto_1fr] items-center gap-4`}>
           <nav className="hidden items-center gap-2.5 lg:flex">
             {MENUS.map(([t]) => <button key={t} onMouseEnter={() => setMenu(t)} onClick={() => setMenu(menu === t ? null : t)} className={pill(menu === t)}>{t}<Chev up={menu === t} /></button>)}
