@@ -43,7 +43,7 @@ function Wordmark({ compact = false, className = "" }) {
       const kl = k.current.offsetLeft, kw = k.current.offsetWidth;
       const sll = sl.current.offsetLeft, sw = sl.current.offsetWidth;
       const fs = parseFloat(getComputedStyle(box.current).fontSize);
-      const fit = kw - fs * 0.2; /* tira o tracking do K e aproxima a \\ */
+      const fit = kw - fs * 0.08; /* tira o tracking do K e aproxima a \\ */
       const left = W / 2 - (fit + sw) / 2;
       const next = [Math.round(left - kl), Math.round(left + fit - sll)];
       setDx((d) => (d[0] === next[0] && d[1] === next[1] ? d : next));
@@ -70,8 +70,8 @@ function Wordmark({ compact = false, className = "" }) {
         ref={sl}
         className="inline-block"
         initial={false}
-        animate={{ x: compact ? [0, dx[0], dx[1]] : 0 }}
-        transition={compact ? { duration: 0.8, times: [0, 0.6, 1], ease: [[0.45, 0, 0.2, 1], [0.45, 0, 0.2, 1]] } : { duration: 0.8, ease: [0.45, 0, 0.2, 1] }}
+        animate={{ x: compact ? dx[1] : 0 }}
+        transition={{ duration: 0.8, ease: [0.45, 0, 0.2, 1] }}
       >{"\\"}</motion.span>
       <span className={fade}>OS</span>
     </span>
