@@ -122,6 +122,9 @@ const DOTS = (() => {
   return out;
 })();
 
+/* Baixa as miniaturas logo no início, para o mosaico não abrir vazio. */
+if (typeof window !== "undefined") addEventListener("load", () => setTimeout(() => THUMBS.forEach((src) => { new Image().src = src; }), 1500));
+
 const TOP = ["Avodah SAC", "Goiás Direto", "AgroPujante", "RAG", "Go", "Anthropic", "English C2"];
 
 function Search({ q, onClose }) {
@@ -141,7 +144,7 @@ function Search({ q, onClose }) {
         <div className="relative mx-auto hidden aspect-square w-full max-w-[440px] lg:block">
           <div className="absolute inset-0 animate-[spin_240s_linear_infinite] will-change-transform">
             {DOTS.map((d, i) => (
-              <span key={i} className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos, animation: `dotin .6s ease-out ${0.05 + d.ring * 0.07}s both` }} />
+              <span key={i} className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos, animation: `dotin .5s ease-out ${d.ring * 0.045}s both` }} />
             ))}
           </div>
         </div>
