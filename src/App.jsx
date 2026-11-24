@@ -412,36 +412,41 @@ function Clients() {
 /* Uma citação por vez, grande, como um destaque editorial. */
 function Feedback() {
   const [i, setI] = useState(0);
-  const [q, name, role, project] = TESTIMONIALS[i];
-  const site = SITES.find((x) => x.name === project);
   useEffect(() => {
     const t = setTimeout(() => setI((i + 1) % TESTIMONIALS.length), 7000);
     return () => clearTimeout(t);
   }, [i]);
+  /* Tudo empilhado na mesma célula do grid: troca por crossfade, sem a altura pular. */
+  const layer = (on) => `[grid-area:1/1] transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(.22,1,.36,1)] ${on ? "opacity-100 translate-y-0 blur-0" : "pointer-events-none opacity-0 translate-y-2 blur-[2px]"}`;
   return (
     <Section id="feedback" eyebrow="Client feedback" title="What clients said.">
       <div className="grid items-center gap-10 bg-card p-8 sm:p-14 lg:grid-cols-[1fr_360px]">
-        <div className="min-h-[220px]">
-          <AnimatePresence mode="wait">
-            <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45, ease }}>
-              <p className="font-serif text-[30px] leading-[1.2] sm:text-[42px]">“{q}”</p>
-              <p className="mt-6 text-[14px]"><span className="font-semibold">{name}</span> <span className="text-mute">· {role}</span></p>
-            </motion.div>
-          </AnimatePresence>
+        <div>
+          <div className="grid">
+            {TESTIMONIALS.map(([q, name, role], n) => (
+              <div key={q} className={layer(n === i)} aria-hidden={n !== i}>
+                <p className="font-serif text-[30px] leading-[1.2] sm:text-[42px]">“{q}”</p>
+                <p className="mt-6 text-[14px]"><span className="font-semibold">{name}</span> <span className="text-mute">· {role}</span></p>
+              </div>
+            ))}
+          </div>
           <div className="mt-10 flex items-center gap-2">
             {TESTIMONIALS.map((t, n) => (
-              <button key={t[0]} onClick={() => setI(n)} aria-label={`Quote ${n + 1}`} className={`h-1.5 rounded-full transition-all duration-300 ${n === i ? "w-8 bg-ink" : "w-1.5 bg-ink/25 hover:bg-ink/50"}`} />
+              <button key={t[0]} onClick={() => setI(n)} aria-label={`Quote ${n + 1}`} className={`h-1.5 rounded-full transition-all duration-500 ${n === i ? "w-8 bg-ink" : "w-1.5 bg-ink/25 hover:bg-ink/50"}`} />
             ))}
           </div>
         </div>
-        <AnimatePresence mode="wait">
-          {site && (
-            <motion.a key={site.name} href={site.url} target="_blank" rel="noreferrer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="group block">
-              <img src={site.shot} alt={site.name} className="aspect-[4/3] w-full object-cover object-top shadow-[0_20px_50px_rgba(0,0,0,.12)]" />
-              <p className="mt-3 flex items-center gap-1.5 text-[13px] text-mute group-hover:text-ink">{site.name} <Arrow /></p>
-            </motion.a>
-          )}
-        </AnimatePresence>
+        <div className="grid">
+          {TESTIMONIALS.map(([q, , , project], n) => {
+            const site = SITES.find((x) => x.name === project);
+            return site && (
+              <a key={q} href={site.url} target="_blank" rel="noreferrer" className={`group block ${layer(n === i)}`} tabIndex={n === i ? 0 : -1}>
+                <img src={site.shot} alt={site.name} className="aspect-[4/3] w-full object-cover object-top shadow-[0_20px_50px_rgba(0,0,0,.12)]" />
+                <p className="mt-3 flex items-center gap-1.5 text-[13px] text-mute group-hover:text-ink">{site.name} <Arrow /></p>
+              </a>
+            );
+          })}
+        </div>
       </div>
     </Section>
   );
