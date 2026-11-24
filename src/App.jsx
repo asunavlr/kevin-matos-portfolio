@@ -73,7 +73,7 @@ function Wordmark({ compact = false, className = "" }) {
     const dx = dxr.current;
     if (!dx[0]) return 0;
     const p = Math.min(1, Math.max(0, v / dx[0]));
-    if (!dir.current) return dx[1] * p;
+    return dx[1] * p; /* ida e volta: a \\ anda em linha reta, no ritmo do K */
     const t = Math.min(1, Math.max(0, (p - 0.7) / 0.3));
     const q = t * t * (3 - 2 * t);
     return v * (1 - q) + dx[1] * q;
