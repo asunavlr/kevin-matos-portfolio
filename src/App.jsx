@@ -220,11 +220,11 @@ function Header() {
           </a>
           <div className="flex items-center justify-end gap-1.5">
             <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
-            <button onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-full border transition-colors ${line}`} aria-label="Search">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            <button onClick={() => setSearch(true)} className={`grid size-9 place-items-center rounded-xl border transition-colors ${line} ${dark ? "hover:bg-white/10" : "hover:bg-card"}`} aria-label="Search">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
             </button>
-            <button onClick={() => setOpen(true)} className={`grid size-8 place-items-center rounded-lg border transition-colors ${line}`} aria-label="Open menu">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h10" /></svg>
+            <button onClick={() => setOpen(true)} className={`grid size-9 place-items-center rounded-xl border transition-colors ${line} ${dark ? "hover:bg-white/10" : "hover:bg-card"}`} aria-label="Open menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M4 7h16M4 12h12M4 17h8" /></svg>
             </button>
           </div>
         </div>
