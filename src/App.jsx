@@ -54,17 +54,15 @@ function Wordmark({ compact = false, className = "" }) {
     addEventListener("resize", measure);
     return () => { clearTimeout(t); removeEventListener("resize", measure); };
   }, []);
-  /* Recolhendo em três tempos: o K empurra a palavra inteira para a direita,
-     as letras somem, e então o K e a \ deslizam juntos e encaixam no centro.
-     Abrindo: K e \ voltam juntos e as letras reaparecem. */
-  const P = 18; /* quanto o empurrão desloca a palavra */
-  const T = { duration: 1.1, times: [0, 0.3, 0.5, 1], ease: ["easeOut", "linear", [0.45, 0, 0.2, 1]] };
-  const back = { duration: 0.6, ease: [0.45, 0, 0.2, 1] };
-  const pos = (end) => (compact ? [0, P, P, end] : 0);
-  const word = compact
-    ? { x: [0, P, P, P], opacity: [1, 1, 0, 0] }
-    : { x: 0, opacity: 1 };
-  const wordT = compact ? T : { x: { duration: 0 }, opacity: { duration: 0.3, delay: 0.5 } };
+  /* Um só movimento, rápido no início e freando até parar (ease-out forte, como o
+     gráfico de velocidade inverso do After Effects). O K empurra as letras, que somem
+     no caminho, e a \\ chega junto com ele no centro. */
+  const out = [0.16, 1, 0.3, 1];
+  const T = { duration: 0.9, ease: out };
+  const back = { duration: 0.7, ease: out };
+  const pos = (end) => (compact ? end : 0);
+  const word = compact ? { x: dx[0], opacity: 0 } : { x: 0, opacity: 1 };
+  const wordT = compact ? { x: T, opacity: { duration: 0.25, ease: "easeOut" } } : { x: back, opacity: { duration: 0.4, delay: 0.25 } };
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
       <motion.span ref={k} className="inline-block" initial={false} animate={{ x: pos(dx[0]) }} transition={compact ? T : back}>K</motion.span>
