@@ -22,7 +22,7 @@ function Arrow({ className = "" }) {
 /* ---------- header: menus que abrem no hover, logo troca para a marca K\ ao descer ---------- */
 
 function Wordmark({ className = "" }) {
-  return <span className={`whitespace-nowrap font-semibold tracking-[0.16em] ${className}`}>KEVIN MATOS</span>;
+  return <span className={`whitespace-nowrap font-semibold tracking-[0.08em] ${className}`}>KEVIN MATOS</span>;
 }
 
 const MENUS = () => [
