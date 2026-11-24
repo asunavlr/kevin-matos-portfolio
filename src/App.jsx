@@ -8,13 +8,17 @@ const W = "mx-auto max-w-[1440px] px-5 sm:px-[68px]";
 const ext = (href) => (href.startsWith("http") || href.endsWith(".pdf") ? { target: "_blank", rel: "noreferrer" } : {});
 
 /* Trava o scroll da página por trás de menus e modais. */
+let locks = 0;
 function useLock(on) {
+  /* Contador: com busca e modal abertos ao mesmo tempo, o scroll só volta quando os dois fecham. */
   useEffect(() => {
     if (!on) return;
-    const el = document.documentElement;
-    const prev = [el.style.overflow, document.body.style.overflow];
-    el.style.overflow = document.body.style.overflow = "hidden";
-    return () => { [el.style.overflow, document.body.style.overflow] = prev; };
+    locks++;
+    document.documentElement.style.overflow = document.body.style.overflow = "hidden";
+    return () => {
+      locks = Math.max(0, locks - 1);
+      if (!locks) document.documentElement.style.overflow = document.body.style.overflow = "";
+    };
   }, [on]);
 }
 
@@ -482,6 +486,7 @@ function Work({ onOpen }) {
   );
 }
 
+/* Case em página cheia, no estilo de artigo: título grande, imagem larga e o resto em coluna de leitura. */
 function CaseModal({ id, onClose }) {
   const c = CASES.find((x) => x.id === id);
   useLock(!!c);
@@ -491,34 +496,56 @@ function CaseModal({ id, onClose }) {
     addEventListener("keydown", k);
     return () => removeEventListener("keydown", k);
   }, [c, onClose]);
+  const i = CASES.findIndex((x) => x.id === id);
+  const next = CASES[(i + 1) % CASES.length];
   return (
     <AnimatePresence>
       {c && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain bg-ink/30 backdrop-blur-sm" onClick={onClose}>
-          <motion.article initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 30, opacity: 0 }} transition={{ duration: 0.4, ease }} onClick={(e) => e.stopPropagation()} className="mx-auto min-h-full max-w-3xl bg-bg px-6 pb-14 sm:my-10 sm:min-h-0 sm:rounded-2xl sm:px-10">
-            <div className="sticky top-0 -mx-6 flex justify-end bg-bg/90 px-6 py-3 backdrop-blur sm:-mx-10 sm:px-10">
-              <button onClick={onClose} className="grid size-8 place-items-center rounded-lg border border-line" aria-label="Close">✕</button>
-            </div>
-            <p className="text-[13px] text-mute">{c.kind} · {c.year} · {c.badge}</p>
-            <h2 className="mt-1 font-serif text-[34px] leading-tight sm:text-[42px]">{c.name}</h2>
-            <p className="mt-4 text-[16px] leading-relaxed text-mute">{c.lede}</p>
-            {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-[13.5px] font-medium text-bg">Visit live <Arrow /></a>}
-            <div className="mt-8 overflow-hidden rounded-xl border border-line">
+        <motion.div key={c.id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.4, ease }} className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain bg-bg">
+          <div className={`${W} sticky top-0 z-10 flex h-[84px] items-center justify-between bg-bg/90 backdrop-blur`}>
+            <p className="text-[13px] text-mute">Work / <span className="text-ink">{c.name}</span></p>
+            <button onClick={onClose} className="grid size-8 place-items-center rounded-[10px] border border-line bg-card hover:bg-card2" aria-label="Close">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+            </button>
+          </div>
+          <article className={`${W} pb-24`}>
+            <header className="max-w-4xl pt-6 sm:pt-12">
+              <p className="text-[13px] text-mute">{c.kind} · {c.year} · {c.badge}</p>
+              <h1 className="mt-3 font-serif text-[42px] leading-[1.05] tracking-[-0.02em] sm:text-[64px]">{c.name}</h1>
+              <p className="mt-5 text-[17px] leading-relaxed text-mute sm:text-[20px]">{c.lede}</p>
+              {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-[14px] font-medium text-bg">Visit live <Arrow /></a>}
+            </header>
+            <div className="mt-10 overflow-hidden bg-card sm:mt-14">
               {c.video ? <video src={c.video} poster={c.desktop} autoPlay muted loop playsInline className="w-full" /> : <img src={c.desktop} alt={c.name} className="w-full" />}
             </div>
             {c.metrics && (
-              <div className="mt-8 grid gap-5 border-y border-line py-6 sm:grid-cols-3">
-                {c.metrics.map(([n, l]) => <div key={l}><div className="font-serif text-[26px]">{n}</div><p className="mt-1 text-[13px] text-mute">{l}</p></div>)}
+              <div className="mt-10 grid grid-cols-2 gap-6 border-b border-line pb-10 sm:grid-cols-3">
+                {c.metrics.map(([n, l]) => <div key={l}><div className="font-serif text-[30px] leading-none sm:text-[38px]">{n}</div><p className="mt-2 text-[13px] leading-snug text-mute">{l}</p></div>)}
               </div>
             )}
-            <h3 className="mt-8 text-[17px] font-semibold">What I built</h3>
-            <dl className="mt-3 divide-y divide-line text-[15px]">
-              {c.points.map(([k, v]) => <div key={k} className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]"><dt className="font-medium">{k}</dt><dd className="text-mute">{v}</dd></div>)}
-            </dl>
-            {c.gallery && <div className="mt-8 grid gap-3 sm:grid-cols-2">{c.gallery.map((g) => <img key={g} src={g} alt="" loading="lazy" className="rounded-lg border border-line" />)}</div>}
-            <blockquote className="mt-8 border-l-2 border-clay pl-4 font-serif text-[19px] leading-snug">{c.meaning}</blockquote>
-            <div className="mt-6 flex flex-wrap gap-1.5">{c.tags?.map((t) => <span key={t} className="rounded-full border border-line px-2.5 py-0.5 text-[12.5px] text-mute">{t}</span>)}</div>
-          </motion.article>
+            <div className="mt-12 grid gap-10 lg:grid-cols-[240px_1fr]">
+              <p className="text-[13.5px] text-mute">What I built</p>
+              <dl className="max-w-3xl divide-y divide-line border-y border-line">
+                {c.points.map(([k, v]) => <div key={k} className="grid gap-1 py-4 sm:grid-cols-[170px_1fr] sm:gap-6"><dt className="text-[15px] font-semibold">{k}</dt><dd className="text-[15px] leading-relaxed text-mute">{v}</dd></div>)}
+              </dl>
+            </div>
+            {c.gallery && (
+              <div className="mt-14 grid gap-4 sm:grid-cols-2">
+                {c.gallery.map((g) => <img key={g} src={g} alt="" loading="lazy" className="w-full bg-card" />)}
+              </div>
+            )}
+            <div className="mt-14 grid gap-10 lg:grid-cols-[240px_1fr]">
+              <p className="text-[13.5px] text-mute">Why it matters</p>
+              <div className="max-w-3xl">
+                <p className="font-serif text-[24px] leading-snug sm:text-[30px]">{c.meaning}</p>
+                <div className="mt-6 flex flex-wrap gap-1.5">{c.tags?.map((t) => <span key={t} className="rounded-full border border-line bg-card px-3 py-1 text-[12.5px] text-mute">{t}</span>)}</div>
+              </div>
+            </div>
+            <a href={`#project/${next.id}`} className="group mt-20 flex items-center justify-between border-t border-line pt-8">
+              <span><span className="block text-[13px] text-mute">Next project</span><span className="mt-1 block font-serif text-[28px] sm:text-[36px]">{next.name}</span></span>
+              <Arrow className="size-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+            </a>
+          </article>
         </motion.div>
       )}
     </AnimatePresence>
