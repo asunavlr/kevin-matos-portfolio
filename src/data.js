@@ -40,6 +40,26 @@ export const CASES = [
     tags: ["Next.js 16", "Postgres", "pgvector", "Drizzle", "Redis", "Evolution API", "Linux"],
   },
   {
+    id: "goias",
+    name: "Goiás Direto",
+    kind: "News portal",
+    badge: "MVP · Nov 2026",
+    year: "2026",
+    url: "https://goias-direto.vercel.app",
+    desktop: "/kevin/shots/goias.jpg",
+    mobile: "/kevin/shots/goias-m.jpg",
+    color: "#1b1fb8",
+    lede: "MVP of an economic news portal for Goiás, built on the AgroPujante base: editorial home, article pages, light and dark themes and app-style navigation on mobile.",
+    points: [
+      ["Editorial home", "lead story, highlights, most read, columns and a newsletter signup"],
+      ["Article page", "reading progress, share buttons, related stories and an ad slot"],
+      ["Mobile", "bottom tab bar, category chips and a header that collapses on scroll"],
+      ["Proposal", "scope, timeline and pricing delivered as a web page and PDF"],
+    ],
+    meaning: "I can reuse a product base to ship a new client's MVP in days, not months.",
+    tags: ["React", "Vite", "Tailwind", "Motion"],
+  },
+  {
     id: "agro",
     video: "/kevin/video/agro.mp4",
     metrics: [["12", "transactional email flows"], ["Google News", "indexed through technical SEO"], ["Sold", "to the client, with a maintenance contract"]],
@@ -225,14 +245,14 @@ export const SKILLS = {
 };
 
 export const SITES = [
-  { name: "Comply", what: "My studio", shot: "/kevin/shots/comply.jpg", url: "https://comply.website" },
   { name: "Goiás Direto", what: "Economic news portal · MVP", shot: "/kevin/shots/goias.jpg", url: "https://goias-direto.vercel.app" },
-  { name: "Talk With Gabriela", what: "English teacher · personal brand site", shot: "/kevin/shots/gabriela.jpg", url: "https://talk-with-gabriela.vercel.app" },
-  { name: "Harmonia das Flores", what: "Florist · live catalog + admin", shot: "/kevin/shots/harmonia.jpg", url: "https://harmonia-das-flores.vercel.app" },
-  { name: "Prospect Comply", what: "My job & client-prospecting platform", shot: "/kevin/shots/prospect-demo.jpg", url: "https://prospect-comply-production.up.railway.app/demo" },
   { name: "Avodah SAC", what: "Avodah Optical · customer service & CRM platform", shot: "/kevin/shots/sac-painel.jpg", url: "https://sac.avodahoptical.com.br" },
+  { name: "Harmonia das Flores", what: "Florist · live catalog + admin", shot: "/kevin/shots/harmonia.jpg", url: "https://harmonia-das-flores.vercel.app" },
+  { name: "Talk With Gabriela", what: "English teacher · personal brand site", shot: "/kevin/shots/gabriela.jpg", url: "https://talk-with-gabriela.vercel.app" },
   { name: "MACKEI", what: "E-commerce demo", shot: "/kevin/shots/mackei.jpg", url: "https://mackei.vercel.app" },
   { name: "Barbearia Barreto", what: "Barbershop · online booking + admin", shot: "/kevin/shots/barreto.jpg", url: "https://barbearia-barreto-classica.vercel.app" },
+  { name: "Comply", what: "My studio", shot: "/kevin/shots/comply.jpg", url: "https://comply.website" },
+  { name: "Prospect Comply", what: "My job & client-prospecting platform", shot: "/kevin/shots/prospect-demo.jpg", url: "https://prospect-comply-production.up.railway.app/demo" },
   { name: "Pitch's Lounge", what: "Restaurant · Milwaukee, US", shot: "/kevin/shots/pitchs.jpg", url: "https://pitchs-preview.vercel.app" },
   { name: "Dra. Marli Marçal", what: "Dental clinic", shot: "/kevin/shots/marli.jpg", url: "https://dra-marli-marcal.vercel.app" },
   { name: "Gaia", what: "Electronics repair", shot: "/kevin/shots/gaia.jpg", url: "https://gaia-eletronica.vercel.app" },
@@ -555,10 +575,10 @@ export const USES = [
 ];
 
 export const CERTS = [
+  { name: "EF SET English Certificate: C2 Proficient", org: "EF Education First", date: "Nov 2026", note: "80/100 overall. Reading 76 and Listening 84, both C2 on the CEFR scale.", img: "/kevin/certs/efset-english.jpg", url: "/kevin/certs/efset-english.pdf", verify: "https://cert.efset.org/en/tiiCCp" },
   { name: "AI Agents Course", org: "Hugging Face", date: "Nov 2026", note: "Certificate of Excellence. Final project scored 70% on GAIA.", img: "/kevin/certs/hf-agents-course.jpg", url: "/kevin/certs/hf-agents-course.pdf", repo: "https://github.com/asunavlr/gaia-agent" },
   { name: "The LLM Course: Fundamentals of LLMs", org: "Hugging Face", date: "Nov 2026", note: "Certificate of Achievement. Transformer architecture and how LLMs work under the hood.", img: "/kevin/certs/hf-llm-fundamentals.jpg", url: "/kevin/certs/hf-llm-fundamentals.jpg" },
   { name: "Intermediate Machine Learning", org: "Kaggle", date: "Nov 2026", note: "Certificate of completion. Pipelines, cross-validation, XGBoost and data leakage.", img: "/kevin/certs/kaggle-intermediate-ml.jpg", url: "/kevin/certs/kaggle-intermediate-ml.jpg", verify: "https://www.kaggle.com/learn/certification/kevinvlr/intermediate-machine-learning" },
-  { name: "EF SET English Certificate: C2 Proficient", org: "EF Education First", date: "Nov 2026", note: "80/100 overall. Reading 76 and Listening 84, both C2 on the CEFR scale.", img: "/kevin/certs/efset-english.jpg", url: "/kevin/certs/efset-english.pdf", verify: "https://cert.efset.org/en/tiiCCp" },
   { name: "Claude with the Anthropic API", org: "Anthropic", date: "Nov 2026", note: "API, tool use, RAG with embeddings and BM25, prompt caching, evals, MCP and agent workflows.", img: "/kevin/certs/anthropic-api.jpg", url: "/kevin/certs/anthropic-api.pdf", verify: "https://verify.skilljar.com/c/irbx7bmt2xxc" },
   { name: "Introduction to Model Context Protocol", org: "Anthropic", date: "Nov 2026", note: "Building MCP servers and clients for tools and resources.", img: "/kevin/certs/anthropic-mcp.jpg", url: "/kevin/certs/anthropic-mcp.pdf", verify: "https://verify.skilljar.com/c/7j26ddeo3dxu" },
   { name: "Claude Code in Action", org: "Anthropic", date: "Nov 2026", note: "Agentic development workflows with Claude Code.", img: "/kevin/certs/anthropic-claude-code-in-action.jpg", url: "/kevin/certs/anthropic-claude-code-in-action.pdf", verify: "https://verify.skilljar.com/c/6ns49ycpxey5" },
