@@ -243,8 +243,8 @@ function Header() {
             <a href="#certs" onMouseEnter={() => setMenu(null)} className={pill(false)}>Certifications</a>
           </nav>
           <span className="lg:hidden" />
-          <a href="#top" aria-label="Kevin Matos" className="relative grid h-7 w-[170px] place-items-center">
-            <Wordmark compact={compact} className="text-[19px]" />
+          <a href="#top" aria-label="Kevin Matos" className="relative grid h-8 w-[220px] place-items-center">
+            <Wordmark compact={compact} className="text-[24px]" />
           </a>
           <div className="flex items-center justify-end gap-2.5">
             <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
