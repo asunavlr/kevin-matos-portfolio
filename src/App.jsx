@@ -59,7 +59,7 @@ function Wordmark({ compact = false, className = "" }) {
   const ez = "ease-[cubic-bezier(.65,0,.35,1)]";
   const kMove = `inline-block transition-transform duration-[350ms] ${ez} ${compact ? "" : "delay-100"}`;
   const slMove = `inline-block transition-transform duration-500 ${ez} ${compact ? "delay-[300ms]" : ""}`;
-  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-500 ${ez} ${compact ? "opacity-0" : "opacity-100 delay-300"}`;
+  const pushed = `inline-block whitespace-pre transition-[transform,opacity] duration-[800ms] ${ez} ${compact ? "opacity-0" : "opacity-100"}`;
   const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-200 delay-300"}`;
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
