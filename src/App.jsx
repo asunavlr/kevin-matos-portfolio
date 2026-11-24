@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { CASES, CERTS, JOBS, LINKS, NOTES, REPOS, SITES, STATS, TESTIMONIALS } from "./data";
 
 const ease = [0.22, 1, 0.36, 1];
-const W = "mx-auto max-w-[1440px] px-5 sm:px-14";
+const W = "mx-auto max-w-[1440px] px-5 sm:px-[68px]";
 const ext = (href) => (href.startsWith("http") || href.endsWith(".pdf") ? { target: "_blank", rel: "noreferrer" } : {});
 
 /* Trava o scroll da página por trás de menus e modais. */
@@ -218,7 +218,7 @@ function Header() {
   return (
     <>
       <header onMouseLeave={() => setMenu(null)} className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${dark ? "bg-[#141413] text-[#faf9f5]" : "bg-bg text-ink"}`}>
-        <div className={`${W} grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4`}>
+        <div className={`${W} grid h-[84px] grid-cols-[1fr_auto_1fr] items-center gap-4`}>
           <nav className="hidden items-center gap-1.5 lg:flex">
             {MENUS.map(([t]) => <button key={t} onMouseEnter={() => setMenu(t)} onClick={() => setMenu(menu === t ? null : t)} className={pill(menu === t)}>{t}<Chev up={menu === t} /></button>)}
             <a href="#certs" onMouseEnter={() => setMenu(null)} className={pill(false)}>Certifications</a>
@@ -239,7 +239,7 @@ function Header() {
         </div>
         <AnimatePresence>
           {menu && (
-            <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18, ease }} className="absolute left-1/2 top-[56px] hidden w-[1280px] max-w-full -translate-x-1/2 px-5 sm:px-10 lg:block">
+            <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18, ease }} className="absolute left-1/2 top-[70px] hidden w-[1440px] max-w-full -translate-x-1/2 px-5 sm:px-10 lg:block">
               <div className="w-[460px] rounded-2xl border border-line bg-bg px-6 py-4 text-ink shadow-[0_16px_40px_rgba(0,0,0,.07)]">
                 <div className="grid grid-cols-2 gap-8">
                   {MENUS.find((m) => m[0] === menu)[1].map(([h, items]) => (
@@ -256,7 +256,7 @@ function Header() {
           )}
         </AnimatePresence>
       </header>
-      <div className="h-16" />
+      <div className="h-[84px]" />
       <AnimatePresence>{search && <Search onClose={() => setSearch(false)} />}</AnimatePresence>
       <AnimatePresence>{open && <FullMenu onClose={() => setOpen(false)} />}</AnimatePresence>
     </>
@@ -274,7 +274,7 @@ function Hero() {
     <section id="top">
       <div className={`${W} select-none pb-14 pt-12 sm:pt-16`}>
         <Reveal>
-          <h1 className="w-fit max-w-[1100px] select-text text-[26px] leading-[1.22] tracking-[-0.015em] sm:text-[34px]">
+          <h1 className="w-fit max-w-[1340px] select-text text-[26px] leading-[1.22] tracking-[-0.015em] sm:text-[34px]">
             <span className="font-semibold">Full stack & AI engineer building software that ships.</span>{" "}
             <span className="font-serif text-[1.06em]">Production SaaS, LLM agents and 40+ websites for real clients, end to end: architecture, databases, APIs and deployment. Relocating to Dublin in January 2027.</span>
           </h1>
