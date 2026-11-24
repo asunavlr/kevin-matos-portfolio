@@ -165,6 +165,13 @@ export const CASES = [
 ];
 
 export const REPOS = [
+  { name: "kevin-matos-portfolio", lang: "React", color: "#61dafb", desc: "This site: React, Tailwind and Motion, with a logo that folds into K\\, a two-column menu with an endless project feed, search and a footer that slides under the header.", proof: ["React 18", "Tailwind v4", "Motion"], arch: ["Vite", "React", "Motion values", "Tailwind", "Vercel"], code: `/* The \\ follows the K and lands next to it at the same moment. */
+const kx = useMotionValue(0);
+useEffect(() => {
+  const c = animate(kx, compact ? dx[0] : 0, { duration: 0.8, ease: [0.45, 0, 0.2, 1] });
+  return () => c.stop();
+}, [compact, dx, kx]);
+const slx = useTransform(kx, (v) => dx[1] * (v / dx[0]));` },
   { name: "wallet-service", lang: "Go", color: "#00ADD8", desc: "Wallet for game providers: BET, WIN, REFUND and ROLLBACK over HTTP and SQS with identical financial guarantees.", proof: ["284 tests", "50 parallel bets → 1 debit", "SQS · Keycloak"], arch: ["HTTP · SQS","Idempotency key","Ledger tx","Postgres"], code: `func (s *Wallet) Bet(ctx context.Context, r BetReq) error {
   return s.db.Tx(ctx, func(tx Tx) error {
     if done, _ := tx.Seen(r.TxID); done {
