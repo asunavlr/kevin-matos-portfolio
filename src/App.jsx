@@ -729,18 +729,15 @@ function Certs() {
   const list = CERTS.filter((c) => !/EF SET/.test(c.name));
   const feat = FEATURED.map((n) => list.find((c) => c.name === n)).filter(Boolean);
   const rest = list.filter((c) => !feat.includes(c));
-  const ef = CERTS.find((c) => /EF SET/.test(c.name));
+  const [tip, setTip] = useState(null);
   return (
     <Section id="certs" eyebrow="Certifications & languages" title="Always learning, with proof." sub="Every certificate links to its public verification page.">
       <div className="grid gap-4 sm:grid-cols-2">
-        <a href="https://cert.efset.org/en/tiiCCp" target="_blank" rel="noreferrer" className="group relative bg-card p-5">
+        <a href="https://cert.efset.org/en/tiiCCp" target="_blank" rel="noreferrer" onMouseMove={(e) => setTip({ x: e.clientX, y: e.clientY })} onMouseLeave={() => setTip(null)} className="group relative bg-card p-5">
           <p className="text-[13px] text-mute">English</p>
           <p className="mt-1 font-serif text-[28px] leading-tight underline-offset-4 group-hover:underline">C2 Proficient</p>
           <p className="mt-1 text-[13.5px] text-mute">EF SET 80/100 · Reading 76, Listening 84</p>
           <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium">Verify <Arrow /></span>
-          {ef && (
-            <img src={ef.img} alt="EF SET certificate" className="pointer-events-none absolute right-5 top-1/2 z-20 hidden w-[230px] -translate-y-1/2 translate-x-2 rotate-2 opacity-0 shadow-[0_24px_60px_rgba(0,0,0,.22)] transition-all duration-300 group-hover:translate-x-0 group-hover:rotate-0 group-hover:opacity-100 sm:block" />
-          )}
         </a>
         <div className="bg-card p-5">
           <p className="text-[13px] text-mute">Portuguese</p>
@@ -773,6 +770,14 @@ function Certs() {
         ))}
       </div>
 
+      {/* Prévia do certificado que segue o cursor sobre o C2. */}
+      <AnimatePresence>
+        {tip && (
+          <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1, x: tip.x + 18, y: tip.y + 18 }} exit={{ opacity: 0, scale: 0.92 }} transition={{ opacity: { duration: 0.2 }, scale: { duration: 0.2 }, x: { type: "spring", stiffness: 500, damping: 40 }, y: { type: "spring", stiffness: 500, damping: 40 } }} className="pointer-events-none fixed left-0 top-0 z-[90] hidden w-[384px] origin-top-left overflow-hidden rounded-lg bg-white shadow-[0_24px_60px_rgba(0,0,0,.22)] sm:block">
+            <img src="/kevin/certs/efset-english-wide.jpg" alt="" className="aspect-video w-full" />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {open && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(null)} className="fixed inset-0 z-[75] grid place-items-center bg-ink/40 p-4 backdrop-blur-sm">
