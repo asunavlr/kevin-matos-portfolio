@@ -64,9 +64,11 @@ function Wordmark({ compact = false, className = "" }) {
     const c = animate(kx, compact ? dx[0] : 0, { duration: 0.8, ease: [0.45, 0, 0.2, 1] });
     return () => c.stop();
   }, [compact, dx, kx]);
+  /* Na volta, a \\ só acompanha o K em linha reta até o lugar dela, sem passar por cima do "OS". */
   const slx = useTransform(kx, (v) => {
     if (!dx[0]) return 0;
     const p = Math.min(1, Math.max(0, v / dx[0]));
+    if (!compact) return dx[1] * p;
     const t = Math.min(1, Math.max(0, (p - 0.7) / 0.3));
     const q = t * t * (3 - 2 * t);
     return v * (1 - q) + dx[1] * q;
