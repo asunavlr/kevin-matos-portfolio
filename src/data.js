@@ -226,6 +226,7 @@ export const SKILLS = {
 
 export const SITES = [
   { name: "Comply", what: "My studio", shot: "/kevin/shots/comply.jpg", url: "https://comply.website" },
+  { name: "Talk With Gabriela", what: "English teacher · personal brand site", shot: "/kevin/shots/gabriela.jpg", url: "https://talk-with-gabriela.vercel.app" },
   { name: "Harmonia das Flores", what: "Florist · live catalog + admin", shot: "/kevin/shots/harmonia.jpg", url: "https://harmonia-das-flores.vercel.app" },
   { name: "Prospect Comply", what: "My job & client-prospecting platform", shot: "/kevin/shots/prospect-demo.jpg", url: "https://prospect-comply-production.up.railway.app/demo" },
   { name: "Avodah SAC", what: "Avodah Optical · customer service & CRM platform", shot: "/kevin/shots/sac-painel.jpg", url: "https://sac.avodahoptical.com.br" },
@@ -483,8 +484,12 @@ export const NOW = [{
   url: "https://sac.avodahoptical.com.br",
 }];
 
-/* Real quotes only, the section stays hidden while this is empty. [quote, name, role] */
-export const TESTIMONIALS = [];
+/* Real client feedback, translated from Portuguese. [quote, name, role, project]; project matches SITES[].name. */
+export const TESTIMONIALS = [
+  ["I loved it. It looks exactly like me.", "Gabriela", "English teacher, Talk With Gabriela", "Talk With Gabriela"],
+  ["I thought it was incredible, and my customers loved the website too.", "Owner", "Harmonia das Flores, florist", "Harmonia das Flores"],
+  ["I loved the template.", "Lia", "MACKEI", "MACKEI"],
+];
 
 /* Short engineering write-ups, each taken from a real project. */
 export const NOTES = [

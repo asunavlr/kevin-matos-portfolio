@@ -200,7 +200,7 @@ const NAV = [
   ["notes", "Notes"],
 ];
 
-const SECTIONS = [["work", "Work"], ["skills", "What I do"], ["lab", "Engineering lab"], ["studio", "Studio"], ["path", "Experience"], ["now", "Now building"], ["notes", "Engineering notes"], ["uses", "Uses"], ["ireland", "Working in Ireland"], ["contact", "Contact"]];
+const SECTIONS = [["work", "Work"], ["skills", "What I do"], ["lab", "Engineering lab"], ["studio", "Studio"], ["feedback", "Client feedback"], ["path", "Experience"], ["now", "Now building"], ["notes", "Engineering notes"], ["uses", "Uses"], ["ireland", "Working in Ireland"], ["contact", "Contact"]];
 
 function CommandPalette({ open, setOpen }) {
   const [q, setQ] = useState("");
@@ -1347,6 +1347,7 @@ function Studio() {
 }
 
 function SiteCard({ s, className }) {
+  const fb = TESTIMONIALS.find((t) => t[3] === s.name);
   return (
     <a href={s.url} target="_blank" rel="noreferrer" className={`group block ${className ?? ""}`}>
       <div className="overflow-hidden rounded-2xl border border-line2 bg-card">
@@ -1358,8 +1359,9 @@ function SiteCard({ s, className }) {
         <div>
           <div className="font-display text-xl font-semibold tracking-tight">{s.name}</div>
           <div className="text-sm text-soft">{s.what}</div>
+          {fb && <div className="mt-2 text-sm italic text-[#d9bf8a]">“{fb[0]}” <span className="not-italic text-dim">· {fb[1]}</span></div>}
         </div>
-        <span className="flex size-10 items-center justify-center rounded-full border border-line2 transition-all group-hover:rotate-45 group-hover:border-white/60">↗</span>
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-line2 transition-all group-hover:rotate-45 group-hover:border-white/60">↗</span>
       </div>
     </a>
   );
@@ -1373,7 +1375,7 @@ function Experience() {
   const h = useSpring(scrollYProgress, { stiffness: 100, damping: 25 });
   return (
     <section id="path" className="mx-auto max-w-6xl px-4 py-28 sm:px-6">
-      <SectionHead index="05" eyebrow="Experience" title={<>Where I've <span className="grad">been building.</span></>} />
+      <SectionHead index="06" eyebrow="Experience" title={<>Where I've <span className="grad">been building.</span></>} />
       <div ref={ref} className="relative pl-8 sm:pl-12">
         <div className="absolute left-[7px] top-2 bottom-2 w-px bg-line2 sm:left-[11px]" />
         <motion.div style={{ scaleY: h }} className="absolute left-[7px] top-2 bottom-2 w-px origin-top bg-gradient-to-b from-vio to-cy sm:left-[11px]" />
@@ -1499,7 +1501,7 @@ function Now() {
           </button>
         ))}
       </div>
-      <SectionHead index="06" eyebrow="Now building" title={<>{N.title ?? N.name} <span className="grad">{N.line}</span></>} sub={N.desc} />
+      <SectionHead index="07" eyebrow="Now building" title={<>{N.title ?? N.name} <span className="grad">{N.line}</span></>} sub={N.desc} />
       <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.25fr]">
         <div>
           <div className="space-y-2">
@@ -1582,15 +1584,18 @@ function GitHubActivity() {
 function Testimonials() {
   if (!TESTIMONIALS.length) return null;
   return (
-    <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-      <SectionHead index="07" eyebrow="Kind words" title={<>What people <span className="grad">say.</span></>} />
-      <div className="grid gap-4 md:grid-cols-2">
-        {TESTIMONIALS.map(([q, name, role], n) => (
+    <section id="feedback" className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
+      <SectionHead index="05" eyebrow="Client feedback" title={<>What clients <span className="grad">say.</span></>} sub="Messages from clients after launch, translated from Portuguese." />
+      <div className="grid gap-4 md:grid-cols-3">
+        {TESTIMONIALS.map(([q, name, role, project], n) => (
           <Reveal key={name} delay={n * 0.08}>
             <Spotlight className="h-full rounded-2xl border border-line bg-card p-8">
               <div className="font-display text-5xl leading-none text-vio">“</div>
               <p className="mt-2 text-lg leading-relaxed text-ink/90">{q}</p>
               <div className="mt-6 text-sm"><span className="text-ink">{name}</span> <span className="text-dim">· {role}</span></div>
+              {SITES.find((x) => x.name === project) && (
+                <a href={SITES.find((x) => x.name === project).url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-[#d9bf8a] hover:underline">See the project ↗</a>
+              )}
             </Spotlight>
           </Reveal>
         ))}
@@ -1633,7 +1638,7 @@ function Notes() {
   const [open, setOpen] = useState(null);
   return (
     <section id="notes" className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-      <SectionHead index="07" eyebrow="Engineering notes" title={<>How I think, <span className="grad">in writing.</span></>} sub="Short write-ups of real decisions from production work. The kind of thing we'd talk about in a technical interview." />
+      <SectionHead index="08" eyebrow="Engineering notes" title={<>How I think, <span className="grad">in writing.</span></>} sub="Short write-ups of real decisions from production work. The kind of thing we'd talk about in a technical interview." />
       <div className="space-y-3">
         {NOTES.map((n) => {
           const on = open === n.slug;
@@ -1724,7 +1729,7 @@ const IRELAND = [
 function Ireland() {
   return (
     <section id="ireland" className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-      <SectionHead index="08" eyebrow="Working in Ireland" title={<>Everything a recruiter <span className="grad">needs to know.</span></>} sub="The practical answers up front, so we can talk about the work." />
+      <SectionHead index="09" eyebrow="Working in Ireland" title={<>Everything a recruiter <span className="grad">needs to know.</span></>} sub="The practical answers up front, so we can talk about the work." />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {IRELAND.map(([k, t, d], n) => (
           <Reveal key={k} delay={(n % 3) * 0.06}>
@@ -1834,12 +1839,12 @@ export default function App() {
       <Skills />
       <Lab />
       <Studio />
+      <Testimonials />
       <Experience />
       <Now />
       <Notes />
       <Uses />
       <Ireland />
-      <Testimonials />
       <Contact />
       <Footer />
       </div>
