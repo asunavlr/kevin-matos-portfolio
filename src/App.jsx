@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useScroll, useTransform } from "motion/react";
 import { Analytics } from "@vercel/analytics/react";
+import { RUNNERS } from "./runners";
 import { CASES, CERTS, JOBS, LINKS, NOTES, REPOS, SITES, STATS, TESTIMONIALS } from "./data";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -193,7 +194,7 @@ function FullMenu({ onClose }) {
     ["Client sites", SITES.map((x) => [x.name, x.url])],
   ];
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-0 z-[70] bg-[#141413] text-[#faf9f5]">
+    <motion.div initial={{ clipPath: "inset(0 0 100% 0)" }} animate={{ clipPath: "inset(0 0 0% 0)" }} exit={{ clipPath: "inset(0 0 100% 0)" }} transition={{ duration: 0.35, ease }} className="fixed inset-0 z-[70] bg-[#141413] text-[#faf9f5]">
       <div className={`${W} grid h-full lg:grid-cols-2 lg:gap-16`}>
         <div ref={feedRef} onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
           {feed.map(([lap, c], i) => {
@@ -613,6 +614,40 @@ function Feedback() {
 
 /* ---------- listas: open source, experiência, certificações, notas ---------- */
 
+/* Console ao vivo: roda no navegador a lógica central do repo. */
+function Playground({ name }) {
+  const r = RUNNERS[name];
+  const [input, setInput] = useState("");
+  const [lines, setLines] = useState([]);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setLines([]); setInput(""); }, [name]);
+  if (!r) return null;
+  const go = async () => {
+    setBusy(true);
+    setLines([["$ run " + name, "cmd"]]);
+    const t0 = performance.now();
+    try { await r.run((t, k = "") => setLines((l) => [...l, [t, k]]), input); }
+    catch (e) { setLines((l) => [...l, [String(e), "err"]]); }
+    setLines((l) => [...l, [`finished in ${Math.round(performance.now() - t0)}ms`, "dim"]]);
+    setBusy(false);
+  };
+  const tone = { ok: "text-[#8fd18b]", err: "text-[#f08a7a]", cmd: "text-white", dim: "text-white/40" };
+  return (
+    <div className="mt-4 bg-[#141413] text-[#e8e6dc]">
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 p-3">
+        <span className="px-1 text-[12px] text-white/50">{r.label}</span>
+        <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !busy && go()} placeholder={r.placeholder} className="min-w-0 flex-1 rounded-md bg-white/5 px-3 py-1.5 font-mono text-[12.5px] outline-none placeholder:text-white/30 focus:bg-white/10" />
+        <button onClick={go} disabled={busy} className="flex items-center gap-1.5 rounded-md bg-[#faf9f5] px-3 py-1.5 text-[13px] font-medium text-ink disabled:opacity-50">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z" /></svg>{busy ? "Running" : "Run"}
+        </button>
+      </div>
+      <div className="h-[200px] overflow-y-auto p-4 font-mono text-[12.5px] leading-relaxed">
+        {lines.length ? lines.map(([t, k], i) => <div key={i} className={`whitespace-pre-wrap ${tone[k] ?? ""}`}>{t}</div>) : <span className="text-white/35">Press Run to execute this repo's core logic live in your browser.</span>}
+      </div>
+    </div>
+  );
+}
+
 /* Lista à esquerda, detalhe à direita: o fluxo do sistema e um trecho real do código. */
 function Code() {
   const [sel, setSel] = useState(0);
@@ -645,6 +680,7 @@ function Code() {
                 </span>
               ))}
             </div>
+            <Playground name={r.name} />
             <pre className="mt-6 overflow-x-auto bg-[#141413] p-6 font-mono text-[13px] leading-relaxed text-[#e8e6dc]">{r.code}</pre>
             <p className="mt-4 text-[13px] text-mute">{r.proof.join(" · ")}</p>
           </motion.div>
