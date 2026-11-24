@@ -122,7 +122,7 @@ function Search({ q, onClose }) {
   const term = q.trim().toLowerCase();
   const hits = term ? all.filter((h) => `${h[1]} ${h[3]} ${h[0]}`.toLowerCase().includes(term)).slice(0, 10) : [];
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-x-0 bottom-0 top-[84px] z-40 overflow-y-auto bg-bg">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} id="search-scroll" className="fixed inset-x-0 bottom-0 top-[84px] z-40 overflow-y-auto bg-bg">
       <div className={`${W} grid min-h-[calc(100svh-84px)] items-center gap-10 py-10 lg:grid-cols-[1fr_340px]`}>
         <div className="relative mx-auto hidden aspect-square w-full max-w-[440px] lg:block">
           <img src="/kevin/shots/mosaic.png" alt="" className="absolute inset-0 h-full w-full animate-[spin_240s_linear_infinite,reveal_1.1s_ease-out_both]" />
@@ -264,9 +264,11 @@ function Header() {
     return () => { removeEventListener("keydown", k); removeEventListener("click", pick); };
   }, [search]);
   useEffect(() => {
+    /* Vale para a página e para a tela de busca, que tem rolagem própria. */
     const on = () => {
-      setCompact(scrollY > 40);
-      const f = document.getElementById("footer");
+      const sc = document.getElementById("search-scroll");
+      setCompact((sc ? sc.scrollTop : scrollY) > 40);
+      const f = document.getElementById(sc ? "search-footer" : "footer");
       /* O footer sobe por baixo do header: o fundo claro encolhe até onde o footer começa,
          e o texto inverte quando o footer passa do meio dos botões. */
       const top = f ? f.getBoundingClientRect().top : 9999;
@@ -274,9 +276,10 @@ function Header() {
       setDark(top < 42);
     };
     on();
-    addEventListener("scroll", on, { passive: true });
-    return () => removeEventListener("scroll", on);
-  }, []);
+    const t = setTimeout(on, 50);
+    addEventListener("scroll", on, { passive: true, capture: true });
+    return () => { clearTimeout(t); removeEventListener("scroll", on, { capture: true }); };
+  }, [search]);
   const line = dark ? "border-white/15 hover:border-white/40" : "border-line hover:border-ink/25";
   const pill = (on) => `flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[13px] transition-colors duration-200 ${on ? (dark ? "border-white bg-white text-ink" : "border-ink bg-ink text-bg") : dark ? line : "border-line bg-card hover:bg-card2"}`;
   return (
@@ -741,7 +744,7 @@ function Footer({ inSearch = false }) {
     ["Notes", NOTES.map((n) => [n.title, "#notes"])],
   ];
   return (
-    <footer id={inSearch ? undefined : "footer"} className="flex min-h-[100svh] flex-col justify-between bg-[#141413] pt-16 text-[#faf9f5]">
+    <footer id={inSearch ? "search-footer" : "footer"} className="flex min-h-[100svh] flex-col justify-between bg-[#141413] pt-16 text-[#faf9f5]">
       <div className={`${W} grid w-full gap-10 pb-10 pt-10 lg:grid-cols-[1fr_1.7fr]`}>
         <FootMark />
         <div className="border-b border-white/15">{rows.map(([t, items]) => <FootRow key={t} title={t} items={items} />)}</div>
