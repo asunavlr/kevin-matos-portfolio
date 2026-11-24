@@ -62,7 +62,14 @@ function Wordmark({ compact = false, className = "" }) {
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
       <span ref={k} className={kMove} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>K</span>
       <span className={pushed} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>EVIN MA</span>
-      <span ref={sl} className={slMove} style={{ transform: `translateX(${compact ? dx[1] : 0}px)` }}>{"\\"}</span>
+      {/* A \ é empurrada junto com o K e depois volta para encaixar nele. */}
+      <motion.span
+        ref={sl}
+        className="inline-block"
+        initial={false}
+        animate={{ x: compact ? [0, dx[0], dx[1]] : 0 }}
+        transition={compact ? { duration: 0.8, times: [0, 0.55, 1], ease: [0.65, 0, 0.35, 1] } : { duration: 0.5, ease: [0.65, 0, 0.35, 1] }}
+      >{"\\"}</motion.span>
       <span className={fade}>OS</span>
     </span>
   );
