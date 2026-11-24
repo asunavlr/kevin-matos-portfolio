@@ -7,7 +7,7 @@ export const LINKS = {
   call: "", // Cal.com / Calendly link, the "Book a call" button shows once this is set
 };
 
-export const STACK = ["Next.js", "React", "TypeScript", "Python", "FastAPI", "Go", "NestJS", "PostgreSQL", "Supabase", "pgvector", "Pinecone", "LangGraph", "Agno", "Claude", "OpenAI", "Langfuse", "MCP", "Docker", "Redis", "AWS", "Railway", "Vercel", "Tailwind", "GSAP", "three.js", "Expo"];
+export const STACK = ["Next.js", "React", "TypeScript", "Python", "FastAPI", "Go", "NestJS", "PostgreSQL", "Supabase", "pgvector", "Pinecone", "LangGraph", "Agno", "Claude", "OpenAI", "Langfuse", "MCP", "Docker", "Redis", "Kafka", "RabbitMQ", "AWS", "Java", "C++", "Railway", "Vercel", "Tailwind", "GSAP", "three.js", "Expo"];
 
 export const STATS = [
   { n: 2, suffix: "+", label: "years shipping production SaaS end to end" },
@@ -226,6 +226,7 @@ export const SKILLS = {
 
 export const SITES = [
   { name: "Comply", what: "My studio", shot: "/kevin/shots/comply.jpg", url: "https://comply.website" },
+  { name: "Goiás Direto", what: "Economic news portal · MVP", shot: "/kevin/shots/goias.jpg", url: "https://goias-direto.vercel.app" },
   { name: "Talk With Gabriela", what: "English teacher · personal brand site", shot: "/kevin/shots/gabriela.jpg", url: "https://talk-with-gabriela.vercel.app" },
   { name: "Harmonia das Flores", what: "Florist · live catalog + admin", shot: "/kevin/shots/harmonia.jpg", url: "https://harmonia-das-flores.vercel.app" },
   { name: "Prospect Comply", what: "My job & client-prospecting platform", shot: "/kevin/shots/prospect-demo.jpg", url: "https://prospect-comply-production.up.railway.app/demo" },
@@ -245,12 +246,11 @@ export const SITES = [
 ];
 
 export const JOBS = [
-  { co: "Comply.Website", role: "Independent Full Stack & AI Engineer", when: "Jul 2026 to Present", pts: ["Custom websites, internal systems, integrations, workflow automation and applied AI for business clients", "Turn business requirements into maintainable software, with ongoing development and support", "40+ websites and landing pages delivered"] },
-  { co: "Avodah Optical", role: "Client engagement · Full Stack", when: "Sep 2026 to Present", pts: ["Customer service (SAC) and CRM platforms", "Tools for marketing management and operational control", "Continuous development, improvements and technical support"] },
-  { co: "Bluetech Window Films (Somma Films)", role: "Full Stack Software Engineer", when: "Jul 2026 to Oct 2026", pts: ["AI-powered recruitment automation and a construction management app", "Cross-platform Android/iOS apps with Flutter, plus web, APIs and databases", "Linux servers, deployments, billing workflows and debugging"] },
-  { co: "Pujante", role: "Full Stack Engineer & Tech Lead", when: "Apr 2026 to Jul 2026", pts: ["Led sprint planning, stand-ups, retros, roadmap, code review and Git/PR/CI practices", "Built AgroPujante from the ground up, semantic search, subscriptions, dashboards, email flows", "Technical SEO and Google News inclusion; handed over with a maintenance agreement", "EscolaPujante: subscriptions, RBAC, admin tools and AI content workflows"] },
-  { co: "Agrios / MeuAT", role: "Full Stack Engineer", when: "Aug 2025 to May 2026", pts: ["Dados Fazenda, a rural-data SaaS, FastAPI + Next.js, satellite NDVI and embargo monitoring", "Credit and billing with refunds; AI workflows with OpenAI, Cohere, Pinecone, LangGraph, Azure OCR and Agno", "Supabase auth and RLS; Docker, CI/CD, Railway, Vercel and New Relic"] },
-  { co: "CTRL+PLAY", role: "Programming Instructor & Developer", when: "2024 to 2025", pts: ["Responsive interfaces with React/Next.js and TypeScript, REST and GraphQL", "Taught programming concepts and practical projects"] },
+  { co: "Comply (comply.website)", role: "Founder & Full Stack AI Engineer", when: "Jul 2026 to Present", pts: ["Custom web apps, internal systems, integrations and applied AI for business clients; 40+ websites and systems shipped", "Avodah Optical (Sep 2026 to Present): with my business partner, built and run the customer service platform of an eyewear distributor: WhatsApp inbox, tickets and queues, knowledge base, dashboards and an AI agent layer (Next.js 16, PostgreSQL 17 + pgvector, Redis, self-hosted Ubuntu)", "Goiás Direto (Nov 2026): MVP of an economic news portal for Goiás, on the same base as AgroPujante (React, Tailwind, Motion)", "Built Prospect Comply, my own lead-generation and job-search tool aggregating jobs from 5 sources with deduplication and scoring (Next.js 16, SQLite, Railway)"] },
+  { co: "Bluetech Window Films (Somma Films)", role: "Full Stack Software Engineer", when: "Jul 2026 to Oct 2026", pts: ["Built AI-powered recruitment automation and a dedicated construction management application", "Cross-platform Android/iOS apps with Flutter, plus web interfaces, backend services, APIs and database integrations", "Managed Linux servers, deployments, billing workflows and production debugging"] },
+  { co: "Pujante", role: "Full Stack Engineer & Tech Lead", when: "Apr 2026 to Jul 2026", pts: ["Led sprint planning, stand-ups, retrospectives, roadmap prioritisation, code reviews and Git/PR/CI practices", "Built AgroPujante, a legal-intelligence platform for agribusiness, from scratch with Next.js, React, FastAPI and Supabase: semantic search, subscription payments, dashboards and 12 transactional email flows", "Secured Google News inclusion through technical SEO; delivered to the client with an ongoing maintenance agreement", "EscolaPujante: subscriptions, role-based access control, admin tools and AI-assisted content workflows"] },
+  { co: "Agrios / MeuAT", role: "Full Stack Engineer", when: "Aug 2025 to May 2026", pts: ["Dados Fazenda, a rural-data SaaS with R$1M+ ARR (approx. €150k+), FastAPI and Next.js: property management, satellite NDVI data and embargo monitoring", "Credit and billing workflows including refunds; AI workflows with OpenAI, Cohere, Pinecone, LangGraph, Azure OCR and Agno", "Supabase auth and row-level security; Docker, CI/CD, Railway, Vercel and New Relic"] },
+  { co: "CTRL+PLAY", role: "Programming Instructor & Developer", when: "2024 to 2025", pts: ["Responsive interfaces with React/Next.js and TypeScript integrating REST and GraphQL APIs; taught programming to students"] },
   { co: "PUC Goiás", role: "Associate Degree, Systems Analysis & Development", when: "2024 to 2026", pts: ["English: C2 Proficient (EF SET 80/100) · Portuguese: Native"] },
 ];
 
