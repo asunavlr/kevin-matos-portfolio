@@ -42,8 +42,10 @@ function Wordmark({ compact = false, className = "" }) {
       const W = box.current.offsetWidth;
       const kl = k.current.offsetLeft, kw = k.current.offsetWidth;
       const sll = sl.current.offsetLeft, sw = sl.current.offsetWidth;
-      const left = W / 2 - (kw + sw) / 2;
-      setDx([left - kl, left + kw - sll]);
+      const fs = parseFloat(getComputedStyle(box.current).fontSize);
+      const fit = kw - fs * 0.2; /* tira o tracking do K e aproxima a \\ */
+      const left = W / 2 - (fit + sw) / 2;
+      setDx([left - kl, left + fit - sll]);
     };
     measure();
     document.fonts?.ready.then(measure);
@@ -60,7 +62,7 @@ function Wordmark({ compact = false, className = "" }) {
   const fade = `inline-block whitespace-pre transition-opacity ${compact ? "opacity-0 duration-200" : "opacity-100 duration-200 delay-300"}`;
   return (
     <span ref={box} className={`relative inline-flex whitespace-nowrap font-bold tracking-[0.07em] ${className}`}>
-      <span ref={k} className={kMove} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>K</span>
+      <motion.span ref={k} className="inline-block" initial={false} animate={{ x: compact ? dx[0] : 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>K</motion.span>
       <span className={pushed} style={{ transform: `translateX(${compact ? dx[0] : 0}px)` }}>EVIN MA</span>
       {/* A \ é empurrada junto com o K e depois volta para encaixar nele. */}
       <motion.span
@@ -68,7 +70,7 @@ function Wordmark({ compact = false, className = "" }) {
         className="inline-block"
         initial={false}
         animate={{ x: compact ? [0, dx[0], dx[1]] : 0 }}
-        transition={compact ? { duration: 0.55, times: [0, 0.55, 1], ease: [0.65, 0, 0.35, 1] } : { duration: 0.35, ease: [0.65, 0, 0.35, 1] }}
+        transition={compact ? { duration: 0.5, times: [0, 0.5, 1], ease: [0.22, 1, 0.36, 1] } : { duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >{"\\"}</motion.span>
       <span className={fade}>OS</span>
     </span>
