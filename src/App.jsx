@@ -194,7 +194,7 @@ function FullMenu({ onClose }) {
     ["Client sites", SITES.map((x) => [x.name, x.url])],
   ];
   return (
-    <motion.div initial={{ clipPath: "inset(0 0 100% 0)" }} animate={{ clipPath: "inset(0 0 0% 0)" }} exit={{ clipPath: "inset(0 0 100% 0)" }} transition={{ duration: 0.35, ease }} className="fixed inset-0 z-[70] bg-[#141413] text-[#faf9f5]">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-0 z-[70] bg-[#141413] text-[#faf9f5] [backface-visibility:hidden] [transform:translateZ(0)]">
       <div className={`${W} grid h-full lg:grid-cols-2 lg:gap-16`}>
         <div ref={feedRef} onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
           {feed.map(([lap, c], i) => {
