@@ -298,9 +298,9 @@ function Header() {
           <div className="flex items-center justify-end gap-2.5">
             {search ? (
               <>
-                <motion.label initial={{ width: 32 }} animate={{ width: "min(420px, 50vw)" }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="flex h-8 shrink-0 items-center gap-2 overflow-hidden rounded-[10px] border-2 border-[#1f3a8a] bg-bg px-[6px]">
+                <motion.label initial={{ width: 32 }} animate={{ width: Math.min(420, Math.round(innerWidth * 0.4)) }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="flex h-8 shrink-0 items-center gap-2.5 overflow-hidden rounded-[10px] border border-line bg-card px-[7px] focus-within:border-ink/30">
                   <svg className="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
-                  <motion.input initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Enter search..." className="w-full bg-transparent text-[14px] outline-none placeholder:text-mute" />
+                  <motion.input initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Enter search..." className="w-full min-w-0 bg-transparent text-[14px] outline-none placeholder:text-mute" />
                 </motion.label>
                 <button onClick={closeSearch} className="grid size-8 shrink-0 place-items-center rounded-[10px] bg-ink text-bg" aria-label="Close search">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
