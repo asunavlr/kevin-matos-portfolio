@@ -551,6 +551,7 @@ export const USES = [
 
 export const CERTS = [
   { name: "AI Agents Course", org: "Hugging Face", date: "Nov 2026", note: "Certificate of Excellence. Final project scored 70% on GAIA.", img: "/kevin/certs/hf-agents-course.jpg", url: "/kevin/certs/hf-agents-course.pdf", repo: "https://github.com/asunavlr/gaia-agent" },
+  { name: "The LLM Course: Fundamentals of LLMs", org: "Hugging Face", date: "Nov 2026", note: "Certificate of Achievement. Transformer architecture and how LLMs work under the hood.", img: "/kevin/certs/hf-llm-fundamentals.jpg", url: "/kevin/certs/hf-llm-fundamentals.jpg" },
   { name: "Claude with the Anthropic API", org: "Anthropic", date: "Nov 2026", note: "API, tool use, RAG with embeddings and BM25, prompt caching, evals, MCP and agent workflows.", img: "/kevin/certs/anthropic-api.jpg", url: "/kevin/certs/anthropic-api.pdf", verify: "https://verify.skilljar.com/c/irbx7bmt2xxc" },
   { name: "Introduction to Model Context Protocol", org: "Anthropic", date: "Nov 2026", note: "Building MCP servers and clients for tools and resources.", img: "/kevin/certs/anthropic-mcp.jpg", url: "/kevin/certs/anthropic-mcp.pdf", verify: "https://verify.skilljar.com/c/7j26ddeo3dxu" },
   { name: "Claude Code in Action", org: "Anthropic", date: "Nov 2026", note: "Agentic development workflows with Claude Code.", img: "/kevin/certs/anthropic-claude-code-in-action.jpg", url: "/kevin/certs/anthropic-claude-code-in-action.pdf", verify: "https://verify.skilljar.com/c/6ns49ycpxey5" },
