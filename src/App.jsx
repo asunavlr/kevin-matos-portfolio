@@ -215,12 +215,12 @@ function Header() {
     return () => removeEventListener("scroll", on);
   }, []);
   const line = dark ? "border-white/15 hover:border-white/40" : "border-line hover:border-ink/25";
-  const pill = (on) => `flex items-center gap-1.5 rounded-full border px-3 py-1 text-[13px] transition-colors duration-200 ${on ? (dark ? "border-white bg-white text-ink" : "border-ink bg-ink text-bg") : dark ? line : "border-line bg-card hover:bg-card2"}`;
+  const pill = (on) => `flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[13px] transition-colors duration-200 ${on ? (dark ? "border-white bg-white text-ink" : "border-ink bg-ink text-bg") : dark ? line : "border-line bg-card hover:bg-card2"}`;
   return (
     <>
       <header onMouseLeave={() => setMenu(null)} className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${dark ? "bg-[#141413] text-[#faf9f5]" : "bg-bg text-ink"}`}>
         <div className={`${W} grid h-[84px] grid-cols-[1fr_auto_1fr] items-center gap-4`}>
-          <nav className="hidden items-center gap-1.5 lg:flex">
+          <nav className="hidden items-center gap-2.5 lg:flex">
             {MENUS.map(([t]) => <button key={t} onMouseEnter={() => setMenu(t)} onClick={() => setMenu(menu === t ? null : t)} className={pill(menu === t)}>{t}<Chev up={menu === t} /></button>)}
             <a href="#certs" onMouseEnter={() => setMenu(null)} className={pill(false)}>Certifications</a>
           </nav>
@@ -228,7 +228,7 @@ function Header() {
           <a href="#top" aria-label="Kevin Matos" className="relative grid h-7 w-[170px] place-items-center">
             <Wordmark compact={compact} className="text-[19px]" />
           </a>
-          <div className="flex items-center justify-end gap-1.5">
+          <div className="flex items-center justify-end gap-2.5">
             <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
             <button onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Search">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
