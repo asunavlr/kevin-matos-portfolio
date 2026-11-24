@@ -116,7 +116,7 @@ const DOTS = (() => {
     const n = Math.round(ring * 6);
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2 + ring * 0.37;
-      out.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, s: 6 + rnd() * 6, img: THUMBS[Math.floor(rnd() * THUMBS.length)], pos: `${Math.floor(rnd() * 100)}% ${Math.floor(rnd() * 100)}%`, d: ring * 0.03 + rnd() * 0.2 });
+      out.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, s: 6 + rnd() * 6, img: THUMBS[Math.floor(rnd() * THUMBS.length)], pos: `${Math.floor(rnd() * 100)}% ${Math.floor(rnd() * 100)}%`, ring });
     }
   }
   return out;
@@ -141,7 +141,7 @@ function Search({ q, onClose }) {
         <div className="relative mx-auto hidden aspect-square w-full max-w-[440px] lg:block">
           <div className="absolute inset-0 animate-[spin_240s_linear_infinite] will-change-transform">
             {DOTS.map((d, i) => (
-              <span key={i} className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos }} />
+              <span key={i} className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos, animation: `dotin .6s ease-out ${0.05 + d.ring * 0.07}s both` }} />
             ))}
           </div>
         </div>
@@ -264,7 +264,7 @@ function Header() {
   const [menu, setMenu] = useState(null);
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState("");
-  const closeSearch = () => { setSearch(false); setQ(""); };
+  const closeSearch = () => { setSearch(false); setQ(""); dispatchEvent(new Event("search-closed")); };
   useEffect(() => {
     if (!search) return;
     const k = (e) => e.key === "Escape" && closeSearch();
@@ -793,10 +793,17 @@ function useHashCase() {
 
 export default function App() {
   const [id, open, close] = useHashCase();
+  /* Ao fechar a busca, o conteúdo da home volta com um fade. */
+  const [fadeKey, setFadeKey] = useState(0);
+  useEffect(() => {
+    const on = () => setFadeKey((n) => n + 1);
+    addEventListener("search-closed", on);
+    return () => removeEventListener("search-closed", on);
+  }, []);
   return (
     <>
       <Header />
-      <main>
+      <main key={fadeKey} className={fadeKey ? "animate-[fadein_.6s_ease-out_both]" : ""}>
         <Hero />
         <Work onOpen={open} />
         <Clients />
