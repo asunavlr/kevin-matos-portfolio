@@ -28,7 +28,17 @@ function Reveal({ children, className = "", delay = 0 }) {
 
 const Arrow = ({ className = "" }) => <svg className={className} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M8 7h9v9" /></svg>;
 const Chev = ({ up, className = "" }) => <svg className={`transition-transform duration-200 ${up ? "rotate-180" : ""} ${className}`} width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m6 9 6 6 6-6" /></svg>;
-const Wordmark = ({ className = "" }) => <span className={`whitespace-nowrap font-semibold tracking-[0.08em] ${className}`}>KEVIN MATOS</span>;
+/* KEVIN MA\OS: a barra entra no lugar do T. Compacto, o resto recolhe e sobra K\. */
+function Wordmark({ compact = false, className = "" }) {
+  const part = (t, w) => (
+    <span className="inline-block overflow-hidden whitespace-pre align-bottom transition-[max-width,opacity] duration-500 ease-[cubic-bezier(.22,1,.36,1)]" style={{ maxWidth: compact ? 0 : w, opacity: compact ? 0 : 1 }}>{t}</span>
+  );
+  return (
+    <span className={`inline-flex whitespace-nowrap font-semibold tracking-[0.08em] ${className}`}>
+      K{part("EVIN MA", "6.2em")}<span className="tracking-[0.08em]">{"\\"}</span>{part("OS", "1.9em")}
+    </span>
+  );
+}
 
 /* ---------- navegação ---------- */
 
@@ -69,56 +79,82 @@ function Search({ onClose }) {
   );
 }
 
-/* Menu cheio, escuro, como o da referência: destaques à esquerda, navegação grande à direita. */
+/* Menu cheio, escuro, como o da referência: duas colunas que rolam separadas.
+   À esquerda, os projetos num feed que nunca acaba; à direita, a navegação. */
 function FullMenu({ onClose }) {
   const [sub, setSub] = useState(null);
+  const [laps, setLaps] = useState(2);
   useLock(true);
   useEffect(() => {
     const k = (e) => e.key === "Escape" && onClose();
     addEventListener("keydown", k);
     return () => removeEventListener("keydown", k);
   }, [onClose]);
+  const feed = Array.from({ length: laps }, (_, lap) => [...CASES, STUDIO].map((c) => [lap, c])).flat();
+  const more = (e) => {
+    const el = e.currentTarget;
+    if (el.scrollTop + el.clientHeight > el.scrollHeight - 600) setLaps((n) => n + 1);
+  };
+  const rows = [
+    ["Open source", REPOS.map((r) => [r.name, `${LINKS.github}/${r.name}`])],
+    ["Experience", JOBS.map((j) => [j.co, "#experience"])],
+    ["Certifications", CERTS.map((c) => [c.name, c.verify || c.url])],
+    ["Client sites", SITES.map((x) => [x.name, x.url])],
+  ];
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-0 z-[70] overflow-y-auto overscroll-contain bg-[#141413] text-[#faf9f5]">
-      <div className={`${W} flex h-16 items-center justify-between`}>
-        <Wordmark className="text-[17px]" />
-        <button onClick={onClose} className="grid size-9 place-items-center rounded-lg border border-white/20 hover:border-white/50" aria-label="Close menu">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
-        </button>
-      </div>
-      <div className={`${W} grid gap-12 pb-16 pt-8 lg:grid-cols-2`}>
-        <div className="hidden space-y-10 lg:block">
-          {CASES.slice(0, 2).map((c) => (
-            <a key={c.id} href={`#project/${c.id}`} onClick={onClose} className="block max-w-[300px]">
-              <p className="text-[13px] text-white/50">{c.kind}</p>
-              <img src={c.desktop} alt="" className="mt-3 aspect-square w-full object-cover object-left-top" />
-              <p className="mt-4 text-[17px] font-semibold leading-snug">{c.name}</p>
-            </a>
-          ))}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-0 z-[70] bg-[#141413] text-[#faf9f5]">
+      <div className={`${W} grid h-full lg:grid-cols-2 lg:gap-16`}>
+        <div onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] lg:block">
+          {feed.map(([lap, c], i) => {
+            const wide = i % 3 === 2;
+            return (
+              <a key={`${lap}-${c.id}`} href={c.id === "comply" ? c.url : `#project/${c.id}`} {...(c.id === "comply" ? ext(c.url) : {})} onClick={onClose} className={`group mb-20 block ${wide ? "w-full" : "max-w-[300px]"}`}>
+                <p className="flex gap-4 text-[13px] text-white/45"><span>{c.kind}</span><span>{c.year}</span></p>
+                <img src={`/kevin/shots/card-${c.id}.jpg`} alt="" loading="lazy" className={`mt-3 w-full object-cover transition-opacity group-hover:opacity-70 ${wide ? "aspect-[16/9]" : "aspect-square"}`} style={{ objectPosition: wide ? "left top" : POS[c.id] }} />
+                <p className="mt-4 max-w-[300px] text-[17px] font-semibold leading-snug">{c.name}</p>
+              </a>
+            );
+          })}
         </div>
-        <nav>
-          <a href="#top" onClick={onClose} className="block py-1.5 text-[34px] font-semibold sm:text-[40px]">Home</a>
-          {MENUS.map(([t, cols]) => (
-            <div key={t}>
-              <button onClick={() => setSub(sub === t ? null : t)} className={`flex items-center gap-4 py-1.5 text-[34px] font-semibold transition-colors sm:text-[40px] ${sub === t ? "text-white" : "text-white/45 hover:text-white"}`}>{t}<Chev up={sub === t} className="size-4" /></button>
-              <AnimatePresence initial={false}>
-                {sub === t && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease }} className="overflow-hidden">
-                    <div className="grid grid-cols-2 gap-6 pb-5 pt-2">
-                      {cols.map(([h, items]) => (
-                        <ul key={h} className="space-y-2.5">
-                          {items.map(([l, href]) => <li key={l}><a href={href} onClick={onClose} {...ext(href)} className="text-[15px] text-white/60 hover:text-white">{l}</a></li>)}
-                        </ul>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
-          {[["Certifications", "#certs"], ["Contact", "#contact"]].map(([t, h]) => <a key={t} href={h} onClick={onClose} className="block py-1.5 text-[34px] font-semibold text-white/45 hover:text-white sm:text-[40px]">{t}</a>)}
-          <a href={LINKS.cv} target="_blank" rel="noreferrer" className="mt-10 inline-flex items-center gap-2 rounded-lg bg-[#faf9f5] px-5 py-2.5 text-[14px] font-medium text-ink">Download CV <Arrow /></a>
-        </nav>
+        <div className="flex flex-col overflow-y-auto overscroll-contain pb-10">
+          <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between bg-[#141413] lg:justify-end">
+            <Wordmark className="text-[17px] lg:hidden" />
+            <button onClick={onClose} className="grid size-9 place-items-center rounded-lg border border-white/20 hover:border-white/50" aria-label="Close menu">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+            </button>
+          </div>
+          <nav className="pt-10">
+            <a href="#top" onClick={onClose} className="block py-1.5 text-[34px] font-semibold sm:text-[40px]">Home</a>
+            {MENUS.map(([t, cols]) => (
+              <div key={t}>
+                <button onClick={() => setSub(sub === t ? null : t)} className={`flex items-center gap-4 py-1.5 text-[34px] font-semibold transition-colors sm:text-[40px] ${sub === t ? "text-white" : "text-white/45 hover:text-white"}`}>{t}<Chev up={sub === t} className="size-4" /></button>
+                <AnimatePresence initial={false}>
+                  {sub === t && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease }} className="overflow-hidden">
+                      <div className="grid grid-cols-2 gap-6 pb-5 pt-2">
+                        {cols.map(([h, items]) => (
+                          <ul key={h} className="space-y-2.5">
+                            {items.map(([l, href]) => <li key={l}><a href={href} onClick={onClose} {...ext(href)} className="text-[15px] text-white/60 hover:text-white">{l}</a></li>)}
+                          </ul>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+            {[["Certifications", "#certs"], ["Contact", "#contact"]].map(([t, h]) => <a key={t} href={h} onClick={onClose} className="block py-1.5 text-[34px] font-semibold text-white/45 hover:text-white sm:text-[40px]">{t}</a>)}
+          </nav>
+          <div className="mt-24 border-b border-white/15">{rows.map(([t, items]) => <FootRow key={t} title={t} items={items} />)}</div>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <a href={LINKS.cv} target="_blank" rel="noreferrer" className="rounded-lg border border-white/20 px-4 py-2 text-[14px] hover:border-white/50">Download CV</a>
+            <a href={`mailto:${LINKS.email}`} className="rounded-lg border border-white/20 px-4 py-2 text-[14px] hover:border-white/50">Email me →</a>
+            <span className="ml-auto flex gap-5 text-[14px] text-white/60">
+              <a href={LINKS.github} target="_blank" rel="noreferrer" className="hover:text-white">GitHub</a>
+              <a href={LINKS.linkedin} target="_blank" rel="noreferrer" className="hover:text-white">LinkedIn</a>
+            </span>
+          </div>
+        </div>
       </div>
     </motion.div>
   );
@@ -152,8 +188,7 @@ function Header() {
           </nav>
           <span className="lg:hidden" />
           <a href="#top" aria-label="Kevin Matos" className="relative grid h-7 w-[170px] place-items-center">
-            <span className={`absolute text-[19px] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${compact ? "-translate-y-2 opacity-0" : "opacity-100"}`}><Wordmark /></span>
-            <span className={`absolute text-[20px] font-bold tracking-[-0.02em] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${compact ? "opacity-100" : "translate-y-2 opacity-0"}`}>K\</span>
+            <Wordmark compact={compact} className="text-[19px]" />
           </a>
           <div className="flex items-center justify-end gap-1.5">
             <a href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</a>
@@ -252,20 +287,20 @@ function Section({ id, eyebrow, title, sub, children }) {
 
 /* ---------- projetos: cards editoriais, os outros esmaecem no hover ---------- */
 
-const TINTS = ["#d4c5b0", "#c9d4c2", "#cbd6e2", "#e3cfc0", "#d6cfe0", "#cfd8cf", "#e0d6c3"];
+/* Que parte de cada print aparece no recorte vertical. */
+const POS = { avodah: "22% center", goias: "18% top", agro: "50% top", farm: "70% center", school: "75% center", prospect: "50% center", corvus: "20% center", comply: "18% center" };
+/* A Comply entra como último card, levando para o site do estúdio. */
+const STUDIO = { id: "comply", name: "Comply", kind: "Studio", year: "2026", lede: "My studio: custom web apps, internal systems and 40+ websites for business clients.", url: LINKS.studio };
 
 function Work({ onOpen }) {
   return (
     <Section id="work" eyebrow="Selected work" title="Products I built, run or sold." sub="Real clients, real users. Open any project for the architecture and the decisions behind it.">
-      <div className="group/list grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-        {CASES.map((c, i) => (
+      <div className="grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        {[...CASES, STUDIO].map((c, i) => (
           <Reveal key={c.id} delay={(i % 4) * 0.05}>
-            <button onClick={() => onOpen(c.id)} className="block w-full text-left transition-opacity duration-300 group-hover/list:opacity-40 hover:!opacity-100">
+            <button onClick={() => (c.id === "comply" ? open(c.url, "_blank") : onOpen(c.id))} className="block w-full text-left transition-opacity duration-300 hover:opacity-55">
               <p className="flex items-center gap-2.5 text-[13px] text-mute"><span className="rounded-full bg-card px-2 leading-5 tracking-widest">···</span>{c.kind}</p>
-              <div className="relative mt-3 flex aspect-[4/5] flex-col justify-between overflow-hidden p-5" style={{ background: TINTS[i % TINTS.length] }}>
-                <span className="text-[12px] text-ink/55">{c.year}</span>
-                <span className="font-serif text-[38px] leading-[1.02] text-ink/85">{c.name}</span>
-              </div>
+              <img src={`/kevin/shots/card-${c.id}.jpg`} alt={c.name} loading="lazy" className="mt-3 aspect-[4/5] w-full object-cover" style={{ objectPosition: POS[c.id] ?? "left top" }} />
               <h3 className="mt-4 text-[18px] font-semibold leading-snug">{c.name}</h3>
               <p className="mt-1.5 line-clamp-3 text-[14px] leading-relaxed text-mute">{c.lede}</p>
             </button>
