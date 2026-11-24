@@ -205,13 +205,13 @@ function FullMenu({ onClose }) {
         </div>
         <div className="flex flex-col overflow-y-auto overscroll-contain pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="sticky top-0 z-10 flex h-[84px] shrink-0 items-center justify-between bg-[#141413] lg:justify-end">
-            <Wordmark className="text-[17px] lg:hidden" />
+            <span className="text-[26px] font-bold lg:hidden">K{"\\"}</span>
             <button onClick={onClose} className="grid size-8 place-items-center rounded-[10px] border border-white/15 bg-white/5 hover:bg-white/10" aria-label="Close menu">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
             </button>
           </div>
-          <nav className="pt-10">
-            <a href="#top" onClick={onClose} className="block py-1.5 text-[34px] font-semibold sm:text-[40px]">Home</a>
+          <nav className="pt-4 lg:pt-10">
+            <a href="#top" onClick={onClose} className="block py-1 text-[34px] font-semibold sm:text-[40px]">Home</a>
             {MENUS.map(([t, cols]) => (
               <div key={t}>
                 <button onClick={() => setSub(sub === t ? null : t)} className={`flex items-center gap-4 py-1.5 text-[34px] font-semibold transition-colors sm:text-[40px] ${sub === t ? "text-white" : "text-white/45 hover:text-white"}`}>{t}<Chev up={sub === t} className="size-4" /></button>
@@ -232,7 +232,16 @@ function FullMenu({ onClose }) {
             ))}
             {[["Certifications", "#certs"], ["Contact", "#contact"]].map(([t, h]) => <a key={t} href={h} onClick={onClose} className="block py-1.5 text-[34px] font-semibold text-white/45 hover:text-white sm:text-[40px]">{t}</a>)}
           </nav>
-          <div className="mt-24 border-b border-white/15">{rows.map(([t, items]) => <FootRow key={t} title={t} items={items} />)}</div>
+          <div className="mt-14 lg:hidden">
+            <Carousel dark items={[...CASES, STUDIO]} render={(c) => (
+              <a href={c.id === "comply" ? c.url : `#project/${c.id}`} {...(c.id === "comply" ? ext(c.url) : {})} onClick={onClose} className="block">
+                <p className="flex gap-4 text-[13px] text-white/45"><span>{c.kind}</span><span>{c.year}</span></p>
+                <img src={`/kevin/shots/card-${c.id}.jpg`} alt="" loading="lazy" className="mt-3 aspect-[4/3] w-full object-cover" style={{ objectPosition: POS[c.id] }} />
+                <p className="mt-3 text-[17px] font-semibold leading-snug">{c.name}</p>
+              </a>
+            )} />
+          </div>
+          <div className="mt-14 border-b border-white/15 lg:mt-24">{rows.map(([t, items]) => <FootRow key={t} title={t} items={items} />)}</div>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <a href={LINKS.cv} target="_blank" rel="noreferrer" className="rounded-lg border border-white/20 px-4 py-2 text-[14px] hover:border-white/50">Download CV</a>
             <a href={`mailto:${LINKS.email}`} className="rounded-lg border border-white/20 px-4 py-2 text-[14px] hover:border-white/50">Email me →</a>
@@ -286,19 +295,19 @@ function Header() {
     <>
       <header onMouseLeave={() => setMenu(null)} className={`fixed inset-x-0 top-0 z-50 transition-colors duration-200 ${dark ? "text-[#faf9f5]" : "text-ink"}`}>
         <span className="absolute inset-x-0 top-0 -z-10 bg-bg" style={{ height: cut }} />
-        <div className={`${W} grid h-[84px] grid-cols-[1fr_auto_1fr] items-center gap-4`}>
+        <div className={`${W} flex h-[84px] items-center justify-between gap-4 lg:grid lg:grid-cols-[1fr_auto_1fr]`}>
           <nav className="hidden items-center gap-2.5 lg:flex">
             {MENUS.map(([t]) => <button key={t} onMouseEnter={() => setMenu(t)} onClick={() => setMenu(menu === t ? null : t)} className={pill(menu === t)}>{t}<Chev up={menu === t} /></button>)}
             <a href="#certs" onMouseEnter={() => setMenu(null)} className={pill(false)}>Certifications</a>
           </nav>
-          <span className="lg:hidden" />
-          <a href="#top" onClick={(e) => { e.preventDefault(); if (search) closeSearch(); setMenu(null); history.pushState(null, "", location.pathname); dispatchEvent(new HashChangeEvent("hashchange")); scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="Kevin Matos" className="relative grid h-8 w-[220px] place-items-center">
+          <a href="#top" onClick={(e) => { e.preventDefault(); if (search) closeSearch(); history.pushState(null, "", location.pathname); dispatchEvent(new HashChangeEvent("hashchange")); scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="Kevin Matos" className="text-[26px] font-bold tracking-[-0.01em] lg:hidden">K{"\\"}</a>
+          <a href="#top" onClick={(e) => { e.preventDefault(); if (search) closeSearch(); setMenu(null); history.pushState(null, "", location.pathname); dispatchEvent(new HashChangeEvent("hashchange")); scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="Kevin Matos" className="relative hidden h-8 w-[220px] place-items-center lg:grid">
             <Wordmark compact={compact} className="text-[24px]" />
           </a>
           <div className="flex items-center justify-end gap-2.5">
             {search ? (
               <>
-                <motion.label initial={{ width: 32 }} animate={{ width: Math.min(420, Math.round(innerWidth * 0.4)) }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="flex h-8 shrink-0 items-center gap-2.5 overflow-hidden rounded-[10px] border border-line bg-card px-[7px] focus-within:border-ink/30">
+                <motion.label initial={{ width: 32 }} animate={{ width: innerWidth < 640 ? innerWidth - 40 - 32 - 32 - 20 : Math.min(420, Math.round(innerWidth * 0.4)) }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="flex h-8 shrink-0 items-center gap-2.5 overflow-hidden rounded-[10px] border border-line bg-card px-[7px] focus-within:border-ink/30">
                   <svg className="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
                   <motion.input initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Enter search..." className="w-full min-w-0 bg-transparent text-[14px] outline-none placeholder:text-mute" />
                 </motion.label>
@@ -308,7 +317,7 @@ function Header() {
               </>
             ) : (
               <>
-                <motion.a initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.15 }} href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</motion.a>
+                <motion.a initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.15 }} href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`flex ${pill(false)}`}><span className="sm:hidden">CV</span><span className="hidden sm:inline">Download CV</span></motion.a>
                 <button onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Search">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
                 </button>
@@ -404,6 +413,35 @@ function Section({ id, eyebrow, title, sub, children }) {
   );
 }
 
+/* Carrossel do celular: arrasta para o lado, com setas e contador "03 / 08". */
+function Carousel({ items, render, dark = false }) {
+  const ref = useRef(null);
+  const [n, setN] = useState(0);
+  const go = (d) => {
+    const el = ref.current;
+    const w = el.firstChild?.offsetWidth + 16 || el.clientWidth;
+    el.scrollBy({ left: d * w, behavior: "smooth" });
+  };
+  const on = () => {
+    const el = ref.current;
+    const w = el.firstChild?.offsetWidth + 16 || 1;
+    setN(Math.round(el.scrollLeft / w));
+  };
+  const btn = `grid size-8 place-items-center rounded-[10px] border ${dark ? "border-white/20" : "border-line bg-card"}`;
+  return (
+    <div>
+      <div ref={ref} onScroll={on} className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {items.map((it, i) => <div key={i} className="w-[82%] shrink-0 snap-start">{render(it, i)}</div>)}
+      </div>
+      <div className="mt-8 flex items-center justify-between">
+        <button onClick={() => go(-1)} className={btn} aria-label="Previous">←</button>
+        <span className={`font-mono text-[13px] ${dark ? "text-white/60" : "text-mute"}`}>{String(n + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}</span>
+        <button onClick={() => go(1)} className={btn} aria-label="Next">→</button>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- projetos: cards editoriais, os outros esmaecem no hover ---------- */
 
 /* Que parte de cada print aparece no recorte vertical. */
@@ -411,10 +449,24 @@ const POS = { avodah: "22% center", goias: "18% top", agro: "50% top", farm: "70
 /* A Comply entra como último card, levando para o site do estúdio. */
 const STUDIO = { id: "comply", name: "Comply", kind: "Studio", year: "2026", lede: "My studio: custom web apps, internal systems and 40+ websites for business clients.", url: LINKS.studio };
 
+function WorkCard({ c, onOpen }) {
+  return (
+    <button onClick={() => (c.id === "comply" ? open(c.url, "_blank") : onOpen(c.id))} className="block w-full text-left">
+      <p className="flex items-center gap-2.5 text-[13px] text-mute"><span className="rounded-full bg-card px-2 leading-5 tracking-widest">···</span>{c.kind}</p>
+      <img src={`/kevin/shots/card-${c.id}.jpg`} alt={c.name} loading="lazy" className="mt-3 aspect-[4/5] w-full object-cover" style={{ objectPosition: POS[c.id] ?? "left top" }} />
+      <h3 className="mt-4 text-[20px] font-semibold leading-snug">{c.name}</h3>
+      <p className="mt-1.5 line-clamp-3 text-[14.5px] leading-relaxed text-mute">{c.lede}</p>
+    </button>
+  );
+}
+
 function Work({ onOpen }) {
   return (
     <Section id="work" eyebrow="Selected work" title="Products I built, run or sold." sub="Real clients, real users. Open any project for the architecture and the decisions behind it.">
-      <div className="grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="sm:hidden">
+        <Carousel items={[...CASES, STUDIO]} render={(c) => <WorkCard c={c} onOpen={onOpen} />} />
+      </div>
+      <div className="hidden gap-x-5 gap-y-10 sm:grid sm:grid-cols-2 lg:grid-cols-4">
         {[...CASES, STUDIO].map((c, i) => (
           <Reveal key={c.id} delay={(i % 4) * 0.05}>
             <button onClick={() => (c.id === "comply" ? open(c.url, "_blank") : onOpen(c.id))} className="block w-full text-left transition-opacity duration-300 hover:opacity-55">
