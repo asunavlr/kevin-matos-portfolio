@@ -746,6 +746,8 @@ function Certs() {
   const feat = FEATURED.map((n) => list.find((c) => c.name === n)).filter(Boolean);
   const rest = list.filter((c) => !feat.includes(c));
   const [tip, setTip] = useState(null);
+  const last = useRef({ x: -999, y: -999 });
+  if (tip) last.current = tip;
   return (
     <Section id="certs" eyebrow="Certifications & languages" title="Always learning, with proof." sub="Every certificate links to its public verification page.">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -786,14 +788,10 @@ function Certs() {
         ))}
       </div>
 
-      {/* Prévia do certificado que segue o cursor sobre o C2. */}
-      <AnimatePresence>
-        {tip && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: "easeOut" }} style={{ left: tip.x + 18, top: tip.y + 18 }} className="pointer-events-none fixed z-[90] hidden w-[384px] origin-top-left overflow-hidden rounded-lg bg-white shadow-[0_24px_60px_rgba(0,0,0,.22)] sm:block">
-            <img src="/kevin/certs/efset-english-wide.jpg" alt="" className="aspect-video w-full" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Prévia do certificado que segue o cursor sobre o C2: sempre montada, só a opacidade muda (sem piscar no Chrome). */}
+      <div style={{ transform: `translate3d(${(tip?.x ?? last.current.x) + 18}px, ${(tip?.y ?? last.current.y) + 18}px, 0)` }} className={`pointer-events-none fixed left-0 top-0 z-[90] hidden w-[384px] overflow-hidden rounded-lg bg-white shadow-[0_24px_60px_rgba(0,0,0,.22)] transition-opacity duration-300 ease-out will-change-[opacity,transform] sm:block ${tip ? "opacity-100" : "opacity-0"}`}>
+        <img src="/kevin/certs/efset-english-wide.jpg" alt="" className="aspect-video w-full" />
+      </div>
       <AnimatePresence>
         {open && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(null)} className="fixed inset-0 z-[75] grid place-items-center bg-ink/40 p-4 backdrop-blur-sm">
