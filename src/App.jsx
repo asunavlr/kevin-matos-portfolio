@@ -407,22 +407,39 @@ function Clients() {
   );
 }
 
+/* Uma citação por vez, grande, como um destaque editorial. */
 function Feedback() {
+  const [i, setI] = useState(0);
+  const [q, name, role, project] = TESTIMONIALS[i];
+  const site = SITES.find((x) => x.name === project);
+  useEffect(() => {
+    const t = setTimeout(() => setI((i + 1) % TESTIMONIALS.length), 7000);
+    return () => clearTimeout(t);
+  }, [i]);
   return (
     <Section id="feedback" eyebrow="Client feedback" title="What clients said.">
-      <div className="grid gap-x-5 gap-y-10 md:grid-cols-3">
-        {TESTIMONIALS.map(([q, name, role, project]) => {
-          const site = SITES.find((x) => x.name === project);
-          return (
-            <Reveal key={q}>
-              <a href={site?.url} target="_blank" rel="noreferrer" className="group block">
-                {site && <img src={site.shot} alt={project} loading="lazy" className="aspect-[4/3] w-full object-cover object-top transition-opacity group-hover:opacity-80" />}
-                <p className="mt-5 font-serif text-[22px] leading-snug">“{q}”</p>
-                <p className="mt-3 text-[13px] text-mute">{name} · {role}</p>
-              </a>
-            </Reveal>
-          );
-        })}
+      <div className="grid items-center gap-10 bg-card p-8 sm:p-14 lg:grid-cols-[1fr_360px]">
+        <div className="min-h-[220px]">
+          <AnimatePresence mode="wait">
+            <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45, ease }}>
+              <p className="font-serif text-[30px] leading-[1.2] sm:text-[42px]">“{q}”</p>
+              <p className="mt-6 text-[14px]"><span className="font-semibold">{name}</span> <span className="text-mute">· {role}</span></p>
+            </motion.div>
+          </AnimatePresence>
+          <div className="mt-10 flex items-center gap-2">
+            {TESTIMONIALS.map((t, n) => (
+              <button key={t[0]} onClick={() => setI(n)} aria-label={`Quote ${n + 1}`} className={`h-1.5 rounded-full transition-all duration-300 ${n === i ? "w-8 bg-ink" : "w-1.5 bg-ink/25 hover:bg-ink/50"}`} />
+            ))}
+          </div>
+        </div>
+        <AnimatePresence mode="wait">
+          {site && (
+            <motion.a key={site.name} href={site.url} target="_blank" rel="noreferrer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="group block">
+              <img src={site.shot} alt={site.name} className="aspect-[4/3] w-full object-cover object-top shadow-[0_20px_50px_rgba(0,0,0,.12)]" />
+              <p className="mt-3 flex items-center gap-1.5 text-[13px] text-mute group-hover:text-ink">{site.name} <Arrow /></p>
+            </motion.a>
+          )}
+        </AnimatePresence>
       </div>
     </Section>
   );
@@ -430,30 +447,46 @@ function Feedback() {
 
 /* ---------- listas: open source, experiência, certificações, notas ---------- */
 
+/* Lista à esquerda, detalhe à direita: o fluxo do sistema e um trecho real do código. */
 function Code() {
+  const [sel, setSel] = useState(0);
+  const r = REPOS[sel];
   return (
     <Section id="code" eyebrow="Open source" title="The engineering, in public." sub="Small, focused repos with tests, each one proving a specific skill.">
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {REPOS.map((r) => (
-          <Reveal key={r.name}>
-            <a href={`${LINKS.github}/${r.name}`} target="_blank" rel="noreferrer" className="group flex h-full flex-col bg-card p-5 transition-colors hover:bg-card2">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 font-mono text-[13.5px]"><span className="size-2 rounded-full" style={{ background: r.color }} />{r.name}</span>
-                <span className="text-[12px] text-mute">{r.lang}</span>
-              </div>
-              <p className="mt-3 text-[14px] leading-relaxed text-mute">{r.desc}</p>
-              <pre className="mt-4 max-h-[150px] overflow-hidden bg-[#141413] p-4 font-mono text-[11.5px] leading-relaxed text-[#e8e6dc] [mask-image:linear-gradient(to_bottom,black_70%,transparent)]">{r.code}</pre>
-              <div className="mt-auto flex flex-wrap gap-1.5 pt-4">{r.proof.map((x) => <span key={x} className="rounded-full border border-line px-2.5 py-0.5 text-[12px] text-mute">{x}</span>)}</div>
-            </a>
-          </Reveal>
-        ))}
+      <div className="grid gap-10 lg:grid-cols-[300px_1fr]">
+        <ul className="border-t border-line">
+          {REPOS.map((x, n) => (
+            <li key={x.name} className="border-b border-line">
+              <button onClick={() => setSel(n)} onMouseEnter={() => setSel(n)} className={`flex w-full items-center justify-between py-3.5 text-left transition-colors ${n === sel ? "text-ink" : "text-mute hover:text-ink"}`}>
+                <span className="flex items-center gap-2.5 font-mono text-[14px]"><span className="size-2 rounded-full" style={{ background: x.color }} />{x.name}</span>
+                <span className="text-[12px]">{x.lang}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <AnimatePresence mode="wait">
+          <motion.div key={r.name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease }}>
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <h3 className="font-mono text-[20px]">{r.name}</h3>
+              <a href={`${LINKS.github}/${r.name}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[13.5px] font-medium hover:underline">View on GitHub <Arrow /></a>
+            </div>
+            <p className="mt-3 max-w-2xl text-[15.5px] leading-relaxed text-mute">{r.desc}</p>
+            <div className="mt-6 flex flex-wrap items-center gap-2 text-[13px]">
+              {r.arch.map((a, n) => (
+                <span key={a} className="flex items-center gap-2">
+                  <span className="border border-line bg-card px-3 py-1.5">{a}</span>
+                  {n < r.arch.length - 1 && <span className="text-mute">→</span>}
+                </span>
+              ))}
+            </div>
+            <pre className="mt-6 overflow-x-auto bg-[#141413] p-6 font-mono text-[13px] leading-relaxed text-[#e8e6dc]">{r.code}</pre>
+            <p className="mt-4 text-[13px] text-mute">{r.proof.join(" · ")}</p>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </Section>
   );
 }
-
-/* Print de cada trabalho, quando tem. */
-const JOB_SHOT = { "Goiás Direto": "card-goias", "Avodah Optical": "card-avodah", "Comply (comply.website)": "card-comply", Pujante: "card-agro", "Agrios / MeuAT": "card-farm" };
 
 function Experience() {
   return (
@@ -466,7 +499,7 @@ function Experience() {
               <p className="pt-0.5 text-[13px] text-mute md:pr-8 md:text-right">{j.when}</p>
               <span className="absolute left-0 top-[7px] size-[11px] rounded-full border-2 border-bg bg-ink md:left-[200px]" />
               <div className="md:pl-10">
-                <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
+                <div className="max-w-3xl">
                   <div>
                     <h3 className="text-[17px] font-semibold">{j.co}</h3>
                     <p className="text-[14px] text-mute">{j.role}{j.via ? ` · ${j.via}` : ""}</p>
@@ -474,8 +507,7 @@ function Experience() {
                       {j.pts.map((p) => <li key={p} className="text-[14.5px] leading-relaxed text-mute">{p}</li>)}
                     </ul>
                   </div>
-                  {JOB_SHOT[j.co] && <img src={`/kevin/shots/${JOB_SHOT[j.co]}.jpg`} alt="" loading="lazy" className="hidden aspect-[4/3] w-full object-cover object-left-top lg:block" />}
-                </div>
+                  </div>
               </div>
             </li>
           </Reveal>
