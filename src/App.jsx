@@ -105,25 +105,8 @@ const MENUS = [
   ["About", [["Career", [["Experience", "#experience"], ["Certifications", "#certs"], ["Engineering notes", "#notes"]]], ["Contact", [["Email", `mailto:${LINKS.email}`], ["LinkedIn", LINKS.linkedin], ["GitHub", LINKS.github]]]]],
 ];
 
-/* Mosaico circular de miniaturas dos trabalhos, girando devagar, como na busca da referência. */
-const THUMBS = [...CASES.map((c) => `/kevin/shots/card-${c.id}.jpg`), ...SITES.map((x) => x.shot)];
-const DOTS = (() => {
-  const out = [];
-  let seed = 7;
-  const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
-  for (let ring = 1; ring <= 8; ring++) {
-    const r = ring * 26;
-    const n = Math.round(ring * 6);
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2 + ring * 0.37;
-      out.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, s: 6 + rnd() * 6, img: THUMBS[Math.floor(rnd() * THUMBS.length)], pos: `${Math.floor(rnd() * 100)}% ${Math.floor(rnd() * 100)}%`, ring });
-    }
-  }
-  return out;
-})();
-
-/* Baixa as miniaturas logo no início, para o mosaico não abrir vazio. */
-if (typeof window !== "undefined") addEventListener("load", () => setTimeout(() => THUMBS.forEach((src) => { new Image().src = src; }), 1500));
+/* Mosaico circular de miniaturas dos trabalhos, numa imagem só (leve), girando devagar. */
+if (typeof window !== "undefined") addEventListener("load", () => setTimeout(() => { new Image().src = "/kevin/shots/mosaic.png"; }, 1500));
 
 const TOP = ["Avodah SAC", "Goiás Direto", "AgroPujante", "RAG", "Go", "Anthropic", "English C2"];
 
@@ -142,11 +125,7 @@ function Search({ q, onClose }) {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-x-0 bottom-0 top-[84px] z-40 overflow-y-auto bg-bg">
       <div className={`${W} grid min-h-[calc(100svh-84px)] items-center gap-10 py-10 lg:grid-cols-[1fr_340px]`}>
         <div className="relative mx-auto hidden aspect-square w-full max-w-[440px] lg:block">
-          <div className="absolute inset-0 animate-[spin_240s_linear_infinite] will-change-transform">
-            {DOTS.map((d, i) => (
-              <span key={i} className="absolute block" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)`, width: d.s, height: d.s, backgroundImage: `url(${d.img})`, backgroundSize: "800%", backgroundPosition: d.pos, animation: `dotin .5s ease-out ${d.ring * 0.045}s both` }} />
-            ))}
-          </div>
+          <img src="/kevin/shots/mosaic.png" alt="" className="absolute inset-0 h-full w-full animate-[spin_240s_linear_infinite,reveal_1.1s_ease-out_both]" />
         </div>
         <div>
           {!term ? (
@@ -182,7 +161,14 @@ function Search({ q, onClose }) {
    À esquerda, os projetos num feed que nunca acaba; à direita, a navegação. */
 function FullMenu({ onClose }) {
   const [sub, setSub] = useState(null);
-  const [laps, setLaps] = useState(2);
+  /* Três cópias do feed; o scroll começa na do meio e, ao chegar perto de uma ponta,
+     pula uma volta inteira sem que dê para perceber. Assim rola infinito para os dois lados. */
+  const feedRef = useRef(null);
+  const laps = 3;
+  useEffect(() => {
+    const el = feedRef.current;
+    if (el) el.scrollTop = el.scrollHeight / 3;
+  }, []);
   useLock(true);
   useEffect(() => {
     const k = (e) => e.key === "Escape" && onClose();
@@ -192,7 +178,9 @@ function FullMenu({ onClose }) {
   const feed = Array.from({ length: laps }, (_, lap) => [...CASES, STUDIO].map((c) => [lap, c])).flat();
   const more = (e) => {
     const el = e.currentTarget;
-    if (el.scrollTop + el.clientHeight > el.scrollHeight - 600) setLaps((n) => n + 1);
+    const lap = el.scrollHeight / 3;
+    if (el.scrollTop < lap * 0.5) el.scrollTop += lap;
+    else if (el.scrollTop > lap * 1.5) el.scrollTop -= lap;
   };
   const rows = [
     ["Open source", REPOS.map((r) => [r.name, `${LINKS.github}/${r.name}`])],
@@ -203,9 +191,9 @@ function FullMenu({ onClose }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-0 z-[70] bg-[#141413] text-[#faf9f5]">
       <div className={`${W} grid h-full lg:grid-cols-2 lg:gap-16`}>
-        <div onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
+        <div ref={feedRef} onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
           {feed.map(([lap, c], i) => {
-            const wide = i % 3 === 2;
+            const wide = (i % (CASES.length + 1)) % 3 === 2; /* mesmo padrão em cada volta */
             return (
               <a key={`${lap}-${c.id}`} href={c.id === "comply" ? c.url : `#project/${c.id}`} {...(c.id === "comply" ? ext(c.url) : {})} onClick={onClose} className={`group mb-20 block ${wide ? "w-full" : "max-w-[300px]"}`}>
                 <p className="flex gap-4 text-[13px] text-white/45"><span>{c.kind}</span><span>{c.year}</span></p>
@@ -307,20 +295,20 @@ function Header() {
           <div className="flex items-center justify-end gap-2.5">
             {search ? (
               <>
-                <motion.label layoutId="searchbox" transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="flex h-8 w-[min(420px,50vw)] items-center gap-2 overflow-hidden rounded-[10px] border-2 border-[#1f3a8a] bg-bg px-[7px]">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
+                <motion.label initial={{ width: 32 }} animate={{ width: "min(420px, 50vw)" }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="flex h-8 shrink-0 items-center gap-2 overflow-hidden rounded-[10px] border-2 border-[#1f3a8a] bg-bg px-[6px]">
+                  <svg className="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
                   <motion.input initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Enter search..." className="w-full bg-transparent text-[14px] outline-none placeholder:text-mute" />
                 </motion.label>
-                <button onClick={closeSearch} className="grid size-8 place-items-center rounded-[10px] bg-ink text-bg" aria-label="Close search">
+                <button onClick={closeSearch} className="grid size-8 shrink-0 place-items-center rounded-[10px] bg-ink text-bg" aria-label="Close search">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
                 </button>
               </>
             ) : (
               <>
                 <motion.a initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.15 }} href={LINKS.cv} target="_blank" rel="noreferrer" onMouseEnter={() => setMenu(null)} className={`hidden sm:flex ${pill(false)}`}>Download CV</motion.a>
-                <motion.button layoutId="searchbox" transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Search">
+                <button onClick={() => setSearch(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Search">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5" /></svg>
-                </motion.button>
+                </button>
               </>
             )}
             <button onClick={() => setOpen(true)} className={`grid size-8 place-items-center rounded-[10px] border transition-colors ${dark ? `${line} hover:bg-white/10` : "border-line bg-card hover:bg-card2"}`} aria-label="Open menu">
