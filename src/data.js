@@ -551,4 +551,5 @@ export const USES = [
 
 export const CERTS = [
   { name: "AI Agents Course", org: "Hugging Face", date: "Nov 2026", note: "Certificate of Excellence. Final project scored 70% on GAIA.", img: "/kevin/certs/hf-agents-course.jpg", url: "/kevin/certs/hf-agents-course.pdf", repo: "https://github.com/asunavlr/gaia-agent" },
+  { name: "Claude 101", org: "Anthropic", date: "Nov 2026", note: "Certificate of completion. Final quiz 10/10.", img: "/kevin/certs/anthropic-claude-101.jpg", url: "/kevin/certs/anthropic-claude-101.pdf" },
 ];
