@@ -9,16 +9,23 @@ const W = "mx-auto max-w-[1440px] px-5 sm:px-[68px]";
 const ext = (href) => (href.startsWith("http") || href.endsWith(".pdf") ? { target: "_blank", rel: "noreferrer" } : {});
 
 /* Trava o scroll da página por trás de menus e modais. */
+/* Trava a rolagem da página sem mexer em overflow: assim a barra de rolagem do Chrome
+   não some e volta (era isso que fazia a tela piscar ao abrir menus e modais).
+   Só rola o que estiver dentro de um elemento com data-scroll. */
 let locks = 0;
+const block = (e) => { if (!e.target.closest?.("[data-scroll]")) e.preventDefault(); };
 function useLock(on) {
-  /* Contador: com busca e modal abertos ao mesmo tempo, o scroll só volta quando os dois fecham. */
   useEffect(() => {
     if (!on) return;
-    locks++;
-    document.documentElement.style.overflow = document.body.style.overflow = "hidden";
+    if (!locks++) {
+      addEventListener("wheel", block, { passive: false });
+      addEventListener("touchmove", block, { passive: false });
+    }
     return () => {
-      locks = Math.max(0, locks - 1);
-      if (!locks) document.documentElement.style.overflow = document.body.style.overflow = "";
+      if (!--locks) {
+        removeEventListener("wheel", block);
+        removeEventListener("touchmove", block);
+      }
     };
   }, [on]);
 }
@@ -127,7 +134,7 @@ function Search({ q, onClose }) {
   const term = q.trim().toLowerCase();
   const hits = term ? all.filter((h) => `${h[1]} ${h[3]} ${h[0]}`.toLowerCase().includes(term)).slice(0, 10) : [];
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} id="search-scroll" className="fixed inset-0 z-40 overflow-y-auto bg-bg pt-[84px]">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} data-scroll id="search-scroll" className="fixed inset-0 z-40 overflow-y-auto bg-bg pt-[84px]">
       <div className={`${W} grid min-h-[calc(100svh-84px)] items-center gap-10 py-10 lg:grid-cols-[1fr_340px]`}>
         <div className="relative mx-auto hidden aspect-square w-full max-w-[440px] lg:block">
           <img src="/kevin/shots/mosaic.png" alt="" className="absolute inset-0 h-full w-full animate-[spin_240s_linear_infinite,reveal_1.1s_ease-out_both]" />
@@ -164,7 +171,7 @@ function Search({ q, onClose }) {
 
 /* Menu cheio, escuro, como o da referência: duas colunas que rolam separadas.
    À esquerda, os projetos num feed que nunca acaba; à direita, a navegação. */
-function FullMenu({ onClose }) {
+function FullMenu({ onClose, closing = false }) {
   const [sub, setSub] = useState(null);
   /* Três cópias do feed; o scroll começa na do meio e, ao chegar perto de uma ponta,
      pula uma volta inteira sem que dê para perceber. Assim rola infinito para os dois lados. */
@@ -196,12 +203,10 @@ function FullMenu({ onClose }) {
   return (
     <motion.div
       /* Entrada por CSS e camada fixa (will-change): o Chrome não recompõe a tela no fim do fade, que era o que piscava. */
-      initial={false}
-      exit={{ opacity: 0, transition: { duration: 0.2 } }}
-      className="fixed inset-0 z-[70] animate-[fadein_.25s_ease-out_both] bg-[#141413] text-[#faf9f5] will-change-[opacity]"
+      className={`fixed inset-0 z-[70] ${closing ? "animate-[fadeout_.2s_ease-in_both]" : "animate-[fadein_.25s_ease-out_both]"} bg-[#141413] text-[#faf9f5] will-change-[opacity]`}
     >
       <div className={`${W} grid h-full lg:grid-cols-2 lg:gap-16`}>
-        <div ref={feedRef} onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
+        <div data-scroll ref={feedRef} onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
           {feed.map(([lap, c], i) => {
             const wide = (i % (CASES.length + 1)) % 3 === 2; /* mesmo padrão em cada volta */
             return (
@@ -213,7 +218,7 @@ function FullMenu({ onClose }) {
             );
           })}
         </div>
-        <div className="flex flex-col overflow-y-auto overscroll-contain pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div data-scroll className="flex flex-col overflow-y-auto overscroll-contain pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="sticky top-0 z-10 flex h-[84px] shrink-0 items-center justify-between bg-[#141413] lg:justify-end">
             <span className="text-[26px] font-bold lg:hidden">K{"\\"}</span>
             <button onClick={onClose} className="grid size-8 place-items-center rounded-[10px] border border-white/15 bg-white/5 hover:bg-white/10" aria-label="Close menu">
@@ -273,6 +278,12 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState(null);
   const [search, setSearch] = useState(false);
+  /* Saída do menu também por CSS: some com fade e só depois desmonta. */
+  const [closing, setClosing] = useState(false);
+  const closeMenu = () => {
+    setClosing(true);
+    setTimeout(() => { setOpen(false); setClosing(false); }, 200);
+  };
   const [q, setQ] = useState("");
   const closeSearch = () => { setSearch(false); setQ(""); dispatchEvent(new Event("search-closed")); };
   useEffect(() => {
@@ -359,7 +370,7 @@ function Header() {
       </header>
       <div className="h-[84px]" />
       <AnimatePresence>{search && <Search q={q} onClose={closeSearch} />}</AnimatePresence>
-      <AnimatePresence>{open && <FullMenu onClose={() => setOpen(false)} />}</AnimatePresence>
+      {open && <FullMenu closing={closing} onClose={closeMenu} />}
     </>
   );
 }
@@ -493,7 +504,7 @@ function CaseModal({ id, onClose }) {
   return (
     <AnimatePresence>
       {c && (
-        <motion.div key={c.id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.4, ease }} className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain bg-bg">
+        <motion.div key={c.id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.4, ease }} data-scroll className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain bg-bg">
           <div className={`${W} sticky top-0 z-10 flex h-[84px] items-center justify-between bg-bg/90 backdrop-blur`}>
             <p className="text-[13px] text-mute">Work / <span className="text-ink">{c.name}</span></p>
             <button onClick={onClose} className="grid size-8 place-items-center rounded-[10px] border border-line bg-card hover:bg-card2" aria-label="Close">
