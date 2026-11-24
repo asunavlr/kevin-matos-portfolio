@@ -778,7 +778,7 @@ function Certs() {
       {/* Prévia do certificado que segue o cursor sobre o C2. */}
       <AnimatePresence>
         {tip && (
-          <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1, x: tip.x + 18, y: tip.y + 18 }} exit={{ opacity: 0, scale: 0.92 }} transition={{ opacity: { duration: 0.2 }, scale: { duration: 0.2 }, x: { type: "spring", stiffness: 500, damping: 40 }, y: { type: "spring", stiffness: 500, damping: 40 } }} className="pointer-events-none fixed left-0 top-0 z-[90] hidden w-[384px] origin-top-left overflow-hidden rounded-lg bg-white shadow-[0_24px_60px_rgba(0,0,0,.22)] sm:block">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: "easeOut" }} style={{ left: tip.x + 18, top: tip.y + 18 }} className="pointer-events-none fixed z-[90] hidden w-[384px] origin-top-left overflow-hidden rounded-lg bg-white shadow-[0_24px_60px_rgba(0,0,0,.22)] sm:block">
             <img src="/kevin/certs/efset-english-wide.jpg" alt="" className="aspect-video w-full" />
           </motion.div>
         )}
