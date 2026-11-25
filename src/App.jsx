@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, animate, motion, useMotionValue, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, animate, motion, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { Analytics } from "@vercel/analytics/react";
 import { RUNNERS } from "./runners";
 import { CASES, CERTS, JOBS, LINKS, NOTES, REPOS, SITES, STATS, TESTIMONIALS } from "./data";
@@ -30,12 +30,14 @@ function useLock(on) {
   }, [on]);
 }
 
-function Reveal({ children, className = "", delay = 0 }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "0px 0px -60px 0px" }} transition={{ duration: 0.8, ease, delay }} className={className}>
-      {children}
-    </motion.div>
-  );
+/* Ligado ao scroll: sobe e aparece conforme entra na tela, suavizado por mola. */
+function Reveal({ children, className = "" }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 1", "start 0.7"] });
+  const p = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
+  const opacity = useTransform(p, [0, 1], [0, 1]);
+  const y = useTransform(p, [0, 1], [48, 0]);
+  return <motion.div ref={ref} style={{ opacity, y }} className={className}>{children}</motion.div>;
 }
 
 const Arrow = ({ className = "" }) => <svg className={className} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M8 7h9v9" /></svg>;
