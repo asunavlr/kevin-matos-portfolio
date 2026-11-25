@@ -652,12 +652,12 @@ function Playground({ name }) {
     <div className="mt-4 bg-[#141413] text-[#e8e6dc]">
       <div className="flex flex-wrap items-center gap-2 border-b border-white/10 p-3">
         <span className="px-1 text-[12px] text-white/50">{r.label}</span>
-        <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !busy && go()} placeholder={r.placeholder} className="min-w-0 flex-1 rounded-md bg-white/5 px-3 py-1.5 font-mono text-[12.5px] outline-none placeholder:text-white/30 focus:bg-white/10" />
+        <input value={input} size={1} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !busy && go()} placeholder={r.placeholder} className="min-w-0 flex-1 rounded-md bg-white/5 px-3 py-1.5 font-mono text-[12.5px] outline-none placeholder:text-white/30 focus:bg-white/10" />
         <button onClick={go} disabled={busy} className="flex items-center gap-1.5 rounded-md bg-[#faf9f5] px-3 py-1.5 text-[13px] font-medium text-ink disabled:opacity-50">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z" /></svg>{busy ? "Running" : "Run"}
         </button>
       </div>
-      <div className="h-[200px] overflow-y-auto p-4 font-mono text-[12.5px] leading-relaxed">
+      <div className="h-[220px] overflow-y-auto break-words p-4 font-mono text-[11.5px] sm:text-[12.5px] leading-relaxed">
         {lines.length ? lines.map(([t, k], i) => <div key={i} className={`whitespace-pre-wrap ${tone[k] ?? ""}`}>{t}</div>) : <span className="text-white/35">Press Run to execute this repo's core logic live in your browser.</span>}
       </div>
     </div>
@@ -670,21 +670,21 @@ function Code() {
   const r = REPOS[sel];
   return (
     <Section id="code" eyebrow="Open source" title="The engineering, in public." sub="Small, focused repos with tests, each one proving a specific skill.">
-      <div className="grid gap-10 lg:grid-cols-[300px_1fr]">
-        <ul className="border-t border-line">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[300px_1fr] lg:gap-10">
+        <ul className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] lg:mx-0 lg:block lg:border-t lg:border-line lg:px-0 lg:pb-0">
           {REPOS.map((x, n) => (
-            <li key={x.name} className="border-b border-line">
-              <button onClick={() => setSel(n)} onMouseEnter={() => setSel(n)} className={`flex w-full items-center justify-between py-3.5 text-left transition-colors ${n === sel ? "text-ink" : "text-mute hover:text-ink"}`}>
-                <span className="flex items-center gap-2.5 font-mono text-[14px]"><span className="size-2 rounded-full" style={{ background: x.color }} />{x.name}</span>
-                <span className="text-[12px]">{x.lang}</span>
+            <li key={x.name} className="shrink-0 lg:border-b lg:border-line">
+              <button onClick={() => setSel(n)} onMouseEnter={(e) => matchMedia("(hover: hover)").matches && setSel(n)} className={`flex w-full items-center justify-between gap-3 rounded-full border px-3.5 py-2 text-left transition-colors lg:rounded-none lg:border-0 lg:px-0 lg:py-3.5 ${n === sel ? "border-ink text-ink" : "border-line text-mute hover:text-ink"}`}>
+                <span className="flex items-center gap-2.5 whitespace-nowrap font-mono text-[13px] lg:text-[14px]"><span className="size-2 rounded-full" style={{ background: x.color }} />{x.name}</span>
+                <span className="hidden text-[12px] lg:inline">{x.lang}</span>
               </button>
             </li>
           ))}
         </ul>
         <AnimatePresence mode="wait">
-          <motion.div key={r.name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease }}>
+          <motion.div key={r.name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease }} className="min-w-0">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <h3 className="font-mono text-[20px]">{r.name}</h3>
+              <h3 className="break-all font-mono text-[18px] sm:text-[20px]">{r.name}</h3>
               <a href={`${LINKS.github}/${r.name}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[13.5px] font-medium hover:underline">View on GitHub <Arrow /></a>
             </div>
             <p className="mt-3 max-w-2xl text-[15.5px] leading-relaxed text-mute">{r.desc}</p>
@@ -697,7 +697,7 @@ function Code() {
               ))}
             </div>
             <Playground name={r.name} />
-            <pre className="mt-6 overflow-x-auto bg-[#141413] p-6 font-mono text-[13px] leading-relaxed text-[#e8e6dc]">{r.code}</pre>
+            <pre className="mt-6 overflow-x-auto bg-[#141413] p-4 font-mono text-[11.5px] sm:p-6 sm:text-[13px] leading-relaxed text-[#e8e6dc]">{r.code}</pre>
             <p className="mt-4 text-[13px] text-mute">{r.proof.join(" · ")}</p>
           </motion.div>
         </AnimatePresence>
