@@ -32,7 +32,7 @@ function useLock(on) {
 
 function Reveal({ children, className = "", delay = 0 }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, ease, delay }} className={className}>
+    <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "0px 0px -60px 0px" }} transition={{ duration: 0.8, ease, delay }} className={className}>
       {children}
     </motion.div>
   );
@@ -427,7 +427,7 @@ function Section({ id, eyebrow, title, sub, children }) {
             <h2 className="mt-2 font-serif text-[28px] leading-[1.15] sm:text-[34px]">{title}</h2>
             {sub && <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-mute">{sub}</p>}
           </Reveal>
-          <div className="mt-10">{children}</div>
+          <Reveal className="mt-10" delay={0.08}>{children}</Reveal>
         </div>
       </div>
     </section>
