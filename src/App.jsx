@@ -205,7 +205,7 @@ function FullMenu({ onClose, closing = false }) {
       /* Entrada por CSS e camada fixa (will-change): o Chrome não recompõe a tela no fim do fade, que era o que piscava. */
       className={`fixed inset-0 z-[70] ${closing ? "animate-[fadeout_.2s_ease-in_both]" : "animate-[fadein_.25s_ease-out_both]"} bg-[#141413] text-[#faf9f5] will-change-[opacity]`}
     >
-      <div className={`${W} grid h-full lg:grid-cols-2 lg:gap-16`}>
+      <div className={`${W} grid h-full grid-cols-1 overflow-hidden lg:grid-cols-2 lg:gap-16`}>
         <div data-scroll ref={feedRef} onScroll={more} className="hidden overflow-y-auto overscroll-contain py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:block">
           {feed.map(([lap, c], i) => {
             const wide = (i % (CASES.length + 1)) % 3 === 2; /* mesmo padrão em cada volta */
@@ -218,7 +218,7 @@ function FullMenu({ onClose, closing = false }) {
             );
           })}
         </div>
-        <div data-scroll className="flex flex-col overflow-y-auto overscroll-contain pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div data-scroll className="flex min-h-0 min-w-0 flex-col overflow-y-auto overflow-x-hidden overscroll-contain pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="sticky top-0 z-10 flex h-[84px] shrink-0 items-center justify-between bg-[#141413] lg:justify-end">
             <span className="text-[26px] font-bold lg:hidden">K{"\\"}</span>
             <button onClick={onClose} className="grid size-8 place-items-center rounded-[10px] border border-white/15 bg-white/5 hover:bg-white/10" aria-label="Close menu">
@@ -233,10 +233,10 @@ function FullMenu({ onClose, closing = false }) {
                 <AnimatePresence initial={false}>
                   {sub === t && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease }} className="overflow-hidden">
-                      <div className="grid grid-cols-2 gap-6 pb-5 pt-2">
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-6 pb-5 pt-2">
                         {cols.map(([h, items]) => (
                           <ul key={h} className="space-y-2.5">
-                            {items.map(([l, href]) => <li key={l}><a href={href} onClick={onClose} {...ext(href)} className="text-[15px] text-white/60 hover:text-white">{l}</a></li>)}
+                            {items.map(([l, href]) => <li key={l}><a href={href} onClick={onClose} {...ext(href)} className="break-words text-[14px] text-white/60 hover:text-white sm:text-[15px]">{l}</a></li>)}
                           </ul>
                         ))}
                       </div>
