@@ -138,6 +138,9 @@ function Search({ q, onClose }) {
     ...REPOS.map((r) => ["Open source", r.name, `${LINKS.github}/${r.name}`, `${r.lang} · ${r.desc}`]),
     ...CERTS.map((c) => ["Certificate", c.name, c.verify || c.url, c.org]),
     ...NOTES.map((n) => ["Note", n.title, "#notes", n.tldr]),
+    // Os idiomas ficam fora de CERTS (bloco proprio na secao), mas "English C2" e uma das buscas sugeridas.
+    ["Language", "English C2 Proficient", "https://cert.efset.org/en/tiiCCp", "EF SET 80/100 · Reading 76, Listening 84"],
+    ["Language", "Portuguese (native)", "#certs", "Brazilian"],
   ];
   const term = q.trim().toLowerCase();
   const hits = term ? all.filter((h) => `${h[1]} ${h[3]} ${h[0]}`.toLowerCase().includes(term)).slice(0, 10) : [];
