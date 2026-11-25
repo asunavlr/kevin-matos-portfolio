@@ -1,4 +1,4 @@
-# Kevin Matos · portfolio
+# Kevin O Matos · portfolio
 
 **Live:** [comply.website/kevin](https://comply.website/kevin)
 
